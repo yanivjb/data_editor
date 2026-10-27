@@ -355,6 +355,21 @@ def check_columns(audit, where, header, rows, documented_text):
     return n_rows
 
 
+def check_zip(audit, path):
+    """Flag system clutter packed inside ZIP files (e.g. __MACOSX from macOS)."""
+    try:
+        with zipfile.ZipFile(path) as z:
+            names = z.namelist()
+    except (zipfile.BadZipFile, OSError):
+        audit.add("DATA-2", "REQ", "ZIP file cannot be opened.", audit.rel(path))
+        return
+    audit.inventory["zip"].append(f"{audit.rel(path)} ({len(names)} entries)")
+    clutter = [n for n in names if n.startswith("__MACOSX/") or "/__MACOSX/" in n
+               or Path(n).name.lower() in CLUTTER_NAMES or Path(n).name.startswith(("~$", "._"))]
+    if clutter:
+        audit.add("ARCH-5", "REC", f"ZIP contains {len(clutter)} clutter entries (e.g. `{clutter[0]}`); rebuild it without them, checking the remaining files are unchanged.", audit.rel(path))
+
+
 def excel_sheets(path):
     if path.suffix.lower() not in {".xlsx", ".xlsm"}:
         return None
@@ -543,6 +558,8 @@ def main():
             check_excel(audit, f, csv_stems, documented)
             if " " in f.name:
                 audit.add("DATA-2", "REQ", "File name contains spaces; use a short name without spaces.", audit.rel(f))
+        elif ext == ".zip":
+            check_zip(audit, f)
         elif ext in GUI_EXT:
             audit.add("GUI-1", "REQ", "Project file from point-and-click software; every reported result needs a scripted version.", audit.rel(f))
         elif ext in OTHER_DATA_EXT and f != readme and not f.name.lower().startswith(("license", "licence", "requirements")):
@@ -596,6 +613,7 @@ def render(audit, readme):
         f"- CSV/TSV data: {'; '.join(audit.inventory['data_tables']) or 'none'}",
         f"- Excel: {'; '.join(audit.inventory['excel']) or 'none'}",
         f"- Other data/intermediate files: {fmt_list(audit.inventory['other_data']) or 'none'}",
+        f"- ZIP files: {'; '.join(audit.inventory['zip']) or 'none'}",
         f"- Environment files: {fmt_list(audit.inventory['environment']) or 'none'}",
         "",
         "## Findings",

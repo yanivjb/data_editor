@@ -83,7 +83,12 @@ The details are in `reproducibility_review/` (see
 [Files the review creates](#files-the-review-creates)). A short report for one of
 the test projects in this repository looks like this:
 
-> **Verdict.** The code runs and reproduces Table 1 and Figure 2. One number in the
+> **How to use this report.** Read the summary and results check below, then work
+> through `AUTHOR_TODO.md`, most important first. Put new or corrected files in
+> `data_and_code/`, keeping raw data unedited, and run the review again to confirm.
+> The files in `reproducibility_review/` are only needed for details.
+>
+> **Summary.** The code runs and reproduces Table 1 and Figure 2. One number in the
 > Results differs from the code and one has no code. The README needs a citation,
 > who collected the data, and software versions before you deposit.
 >
@@ -132,6 +137,16 @@ If you find an error in your data, such as two beetles with the same ID:
 
 The agent makes the correction in a labelled step in the code, so readers can see
 it, and describes it in the README.
+
+If someone else will do the fixes, such as a co-author or student, the report and
+`AUTHOR_TODO.md` are written to make sense without the conversation: send them the
+project folder. When the changes are made, open the project again and ask:
+
+> Check this project against the AmNat checklist again. What's fixed, and what's
+> still open?
+
+The agent reads the previous review, reruns everything, and updates the same
+reports.
 
 ## 5. Fix the archive
 
@@ -224,6 +239,9 @@ The agent never uploads or deposits anything.
   that number?"
 - **If the agent goes off track,** say so plainly: "Stop. Don't edit the raw
   data." It should follow you.
+- **The agent does not commit or push** to git unless you ask. If your project is
+  in a git repository, ask it to commit before and after a round of fixes so you
+  can see exactly what changed.
 
 ---
 

@@ -19,7 +19,7 @@ EXPECTED = {
          "GUI-1", "SENS-1", "ARCH-5"},
         {"DATA-10"},
     ),
-    "drift": ({"CODE-13", "DOC-2"}, set()),
+    "drift": ({"CODE-13", "DOC-2", "ARCH-5"}, set()),
     "languages": ({"CODE-2", "CODE-13", "DATA-1"}, set()),
     "review_notes": ({"DOC-2"}, set()),
 }

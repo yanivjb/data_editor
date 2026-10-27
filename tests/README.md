@@ -31,6 +31,7 @@ python3 tests/test_audit.py
 **drift** (Python and SLiM, `.md` manuscript)
 - Table 1: **match** (seeded).
 - Figure 1: **not found in code** (no plotting code).
+- `slim/annotations.zip` contains `__MACOSX/` and `.DS_Store` entries (scan: `ARCH-5`).
 - SLiM sweeps (412 generations, Figure 2): about 3 days on a cluster, no seed, no
   archived outputs, `results/` missing: **not rerun**, with a `CODE-12` finding and
   an offer to set up quick and full modes. `slim` may not be installed.

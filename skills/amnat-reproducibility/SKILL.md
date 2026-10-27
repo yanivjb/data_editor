@@ -38,6 +38,19 @@ In every mode, ask the privacy and sensitive-data questions in "Before you start
 first, before the audit script or anything else reads the author's files. Respect
 the choice of mode. Do not start editing during a scan or review.
 
+**The person in the chat may not be the author.** A co-author, student, or data
+editor may run the review and hand the results to authors who never saw the
+conversation. Write every author-facing file (`REPRODUCIBILITY_REPORT.md`,
+`AUTHOR_TODO.md`, `WHAT_CHANGED.md`) so it stands alone: plain language, no
+checklist IDs, no references to the chat ("as discussed"), and enough context
+that someone opening it cold knows what to do.
+
+**Coming back after changes.** If the project already has a
+`reproducibility_review/` folder, this is a re-review. Read the previous
+`full_report.md` and `AUTHOR_TODO.md` first, find what the authors changed, rerun
+everything, and update the existing reports rather than starting new ones: say
+which earlier findings are now fixed, which remain, and anything new.
+
 ## Ground rules
 
 These protect the scientific record. Do not break them, even when asked casually.
@@ -74,8 +87,10 @@ These protect the scientific record. Do not break them, even when asked casually
    code looks like it should produce.
 7. **Only what the author allows leaves their computer.** Everything you read is
    sent to your model provider, so ask first (see "Before you start"). Never
-   upload, deposit, push, email, or post anything; those are the author's actions
-   (`PRIV-4`).
+   upload, deposit, email, or post anything; those are the author's actions
+   (`PRIV-4`). Do not commit to version control or push to a remote unless the
+   person you are working with asks; if you do, say exactly what was committed and
+   where it was pushed.
 8. **The archive is for readers; notes are for the author.** Files in the archive
    (README, codebook, code comments) contain only finished, reader-facing content:
    what the files are, what the variables mean, how to run the code. Never put
@@ -337,7 +352,10 @@ Status is one of:
   mode, missing runtime). Say why.
 - **not found in code**: no code in the archive produces the item (a `DATA-1`
   failure unless the value is not computed, e.g. a sample size taken from the
-  study design; say so if that is the case).
+  study design; say so if that is the case). For each such item, check whether
+  the data needed to make it are in the archive (e.g. by looking for the columns
+  or files a figure plots), so the authors know whether they need to add only
+  code or also source data. This is read-only; do it as part of the review.
 - **edited after code**: a figure made by code and then changed in another tool.
   Also give match or mismatch for its data content (`FIG-2`).
 - **not computational**: a conceptual diagram, drawn schematic or map, or photo or
@@ -385,9 +403,16 @@ Write two reports: a short one the author reads, and a full one that holds the
 evidence.
 
 **`REPRODUCIBILITY_REPORT.md`** (top of the project folder) fits on one page,
-in plain language, with no checklist IDs:
+in plain language, with no checklist IDs or jargon (write "Summary", not
+"Verdict"). Use these headings:
 
-1. **Verdict**, two or three sentences: does the code run, does it reproduce the
+0. **How to use this report**, three or four lines: read the summary and the
+   results check; work through `AUTHOR_TODO.md`, most important first; put new or
+   corrected files in the archive folder and keep raw data unedited; then run the
+   review again (e.g. "Check this project against the AmNat checklist") to
+   confirm. Mention that the files in `reproducibility_review/` are only needed
+   for details.
+1. **Summary**, two or three sentences: does the code run, does it reproduce the
    paper, and is the archive ready to deposit?
 2. **Results check**, one line: e.g. "38 of 41 results reproduced; 2 have no code;
    1 differs (Results ¶2: 45.3% in the paper, 43.3% from the code)." List every
@@ -410,6 +435,11 @@ with its coverage summary; and a table of all checklist IDs with status.
 
 Show the author the short report, in chat or by opening the file. Do not paste the
 full report into the chat.
+
+End the review by separating what is left: what only the authors can supply or
+decide (in `AUTHOR_TODO.md`), and small, safe things you could still do, each with
+its cost and whether it changes any file (e.g. "rebuild the ZIP files without
+`__MACOSX` folders; contents verified by checksum"). Do them only if asked.
 
 ### 7. Fix (only with approval)
 
