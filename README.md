@@ -24,16 +24,29 @@ prompts you can paste at each step.
 
 1. Install [Claude Code](https://code.claude.com/docs) or
    [Codex](https://developers.openai.com/codex), and Python 3.
-2. Put your manuscript in `my_paper/ms_files/` and your data and code in
-   `my_paper/data_and_code/`.
+2. Make a folder for the paper with a short name, e.g. `selfing_speciation/`, and
+   inside it two folders:
+
+   ```text
+   selfing_speciation/
+   ├── ms_files/          your manuscript and supplement (any format), figure files
+   └── data_and_code/     what you will deposit:
+       ├── README.md      describes your data and code for readers (or README.txt)
+       ├── data/          e.g. your CSV files
+       └── code/          e.g. your R or Python scripts
+   ```
+
+   The README for your data and code goes in `data_and_code/`, at the top. If you
+   don't have one yet, the agent can draft it. Inside `data_and_code/`, any
+   sensible structure works.
 3. Install the skill into your project:
 
    ```sh
    git clone https://github.com/yanivjb/data_editor
-   data_editor/install.sh /path/to/my_paper
+   data_editor/install.sh /path/to/selfing_speciation
    ```
 
-4. Start the agent in your project folder (`cd my_paper`, then `claude` or
+4. Start the agent in your project folder (`cd selfing_speciation`, then `claude` or
    `codex`) and ask: "Check this project against the AmNat data and code
    checklist."
 5. Answer its questions about what it may read and whether any data are

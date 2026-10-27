@@ -5,9 +5,9 @@ the [user guide](user-guide.md).
 
 ## Before you start
 
-- Put your manuscript and supplement in `my_paper/ms_files/`, and the data and code
-  you will deposit in `my_paper/data_and_code/`.
-- Install the skill (`install.sh my_paper`), then open a terminal in `my_paper/`
+- Put your manuscript and supplement in `selfing_speciation/ms_files/`, and the data and code
+  you will deposit in `selfing_speciation/data_and_code/`.
+- Install the skill (`install.sh selfing_speciation`), then open a terminal in `selfing_speciation/`
   and start `claude` or `codex`.
 - Work on a copy, or commit your project to git first, so you can always go back.
 

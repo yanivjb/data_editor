@@ -49,18 +49,31 @@ typical project, plus the time your code takes to run.
 
 ## 2. Organise your project
 
-Put the paper and the archive side by side in one folder:
+Make one folder for the paper, with a short name such as `selfing_speciation/`
+(the examples below use that name). Inside it, keep the paper and the archive side
+by side:
 
 ```text
-my_paper/
-├── ms_files/          your manuscript, supplement, and figure files
-└── data_and_code/     everything you will deposit: README, data, code, outputs
+selfing_speciation/
+├── ms_files/              your manuscript, supplement, and figure files
+│   ├── manuscript.docx
+│   └── supplement.docx
+└── data_and_code/         everything you will deposit on Dryad or Zenodo
+    ├── README.md          describes the data and code for readers (or README.txt)
+    ├── data/              raw data, e.g. CSV files
+    ├── code/              analysis scripts
+    └── outputs/           figures, tables, and results the code writes
 ```
 
-- **`ms_files/`** can be organised however you like. The agent reads it to find
-  every result it needs to check. It is never part of the archive.
-- **`data_and_code/`** is what will go to Dryad or Zenodo. Use any sensible
-  structure, for example `data/`, `code/`, `outputs/`, and a `README.md`.
+- **`ms_files/`** can be organised however you like, with files of any name. The
+  agent reads it to find every result it needs to check. It is never part of the
+  archive.
+- **`data_and_code/`** is what you will deposit. The names inside it are only
+  suggestions; any sensible structure works.
+- **The README** that describes your data and code goes at the top of
+  `data_and_code/`, because it is deposited with them. Name it `README.md` or
+  `README.txt`. If you don't have one yet, the agent can draft one in the order the
+  journal requires.
 
 If your project is organised differently, that is fine: the agent will ask where
 your manuscript and archive are. If you move files to match this layout, rerun your
@@ -74,19 +87,19 @@ can help with that.)
 ```sh
 git clone https://github.com/yanivjb/data_editor
 cd data_editor
-./install.sh /path/to/my_paper
+./install.sh /path/to/selfing_speciation
 ```
 
-This puts the skill in `my_paper/.claude/skills/` (for Claude Code) and
-`my_paper/.agents/skills/` (for Codex). To install it for all your projects
+This puts the skill in `selfing_speciation/.claude/skills/` (for Claude Code) and
+`selfing_speciation/.agents/skills/` (for Codex). To install it for all your projects
 instead, use `./install.sh --user`. To install for one tool only, add `--claude` or
 `--codex`.
 
 **Option B: without git.** On the GitHub page, click **Code → Download ZIP** and
 unzip it. Copy the folder `skills/amnat-reproducibility` into your project:
 
-- for Claude Code: `my_paper/.claude/skills/amnat-reproducibility/`
-- for Codex: `my_paper/.agents/skills/amnat-reproducibility/`
+- for Claude Code: `selfing_speciation/.claude/skills/amnat-reproducibility/`
+- for Codex: `selfing_speciation/.agents/skills/amnat-reproducibility/`
 
 Folders starting with a dot are hidden by default. On a Mac press
 <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>.</kbd> in Finder to show them; on Windows
@@ -99,13 +112,13 @@ To update later, repeat the same steps; the installer replaces the old copy.
 Open a terminal in your project folder and start the agent:
 
 ```sh
-cd /path/to/my_paper
+cd /path/to/selfing_speciation
 claude        # Claude Code
 # or
 codex         # Codex
 ```
 
-(Claude Code also runs in its desktop app and in VS Code; open the `my_paper`
+(Claude Code also runs in its desktop app and in VS Code; open the `selfing_speciation`
 folder there.)
 
 Then ask for what you want, in plain words. For example:
@@ -334,14 +347,14 @@ rerun". Details for Bayesian models, simulations, SLiM, and pipelines are in
 Both helper scripts need only Python 3 and work on their own:
 
 ```sh
-# scan the archive; writes my_paper/reproducibility_review/audit.md
-python3 path/to/amnat-reproducibility/scripts/audit_archive.py my_paper --out reproducibility_review/audit.md
+# scan the archive; writes selfing_speciation/reproducibility_review/audit.md
+python3 path/to/amnat-reproducibility/scripts/audit_archive.py selfing_speciation --out reproducibility_review/audit.md
 
 # the same, without showing any data values
-python3 path/to/amnat-reproducibility/scripts/audit_archive.py my_paper --no-values
+python3 path/to/amnat-reproducibility/scripts/audit_archive.py selfing_speciation --no-values
 
 # list the figures, tables, and numbers in the manuscript
-python3 path/to/amnat-reproducibility/scripts/manuscript_items.py my_paper/ms_files --out my_paper/reproducibility_review/manuscript_items.md
+python3 path/to/amnat-reproducibility/scripts/manuscript_items.py selfing_speciation/ms_files --out selfing_speciation/reproducibility_review/manuscript_items.md
 ```
 
 The scan finds leads, not verdicts. It cannot run your code or check results
