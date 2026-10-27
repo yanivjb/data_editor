@@ -1,0 +1,3 @@
+file,variable,description,type,units,allowed_values,missing_code,notes
+data/example.csv,site,Sampling site,categorical,,A; B; C,NA,
+data/example.csv,mass_g,Fresh body mass at capture,numeric,g,>0,NA,Measured to 0.01 g
