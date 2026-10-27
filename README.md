@@ -11,16 +11,13 @@ It is a pre-submission aid, not part of the journal's review: the journal's data
 editors still decide what is acceptable. Use it early, while the analysis is still
 being written, when fixes are cheap.
 
-**New here?** Start with the [quick start](docs/quick-start.md) (suggested steps and
-prompts), and see the [user guide](docs/user-guide.md) for setup and details.
-
 ## Quick start
 
 The steps below get a first review running. For the whole process, see the
-**[full quick start](docs/quick-start.md)**: a suggested workflow from first
-review to deposit (going through mismatches, answering the to-do list, fixing the
-archive, correcting the manuscript with tracked changes, and wrapping up), with
-prompts you can paste at each step.
+**[user guide](docs/user-guide.md)**: a suggested workflow from first review to
+deposit (going through mismatches, answering the to-do list, fixing the archive,
+correcting the manuscript with tracked changes, and wrapping up), with prompts you
+can paste at each step, plus troubleshooting and other reference.
 
 1. Install [Claude Code](https://code.claude.com/docs) or
    [Codex](https://developers.openai.com/codex), and Python 3.
@@ -52,8 +49,8 @@ prompts you can paste at each step.
 5. Answer its questions about what it may read and whether any data are
    sensitive. Read the one-page `REPRODUCIBILITY_REPORT.md` and work through
    `AUTHOR_TODO.md`; details are in `reproducibility_review/`.
-6. Carry on with the [full quick start](docs/quick-start.md) for what to do next
-   and suggested prompts.
+6. Carry on with the [user guide](docs/user-guide.md) for what to do next and
+   suggested prompts.
 
 ## What it does
 
@@ -129,9 +126,8 @@ you the commands to run yourself.
 
 ## More
 
-- [Quick start](docs/quick-start.md): suggested order of work and prompts to paste.
-- [User guide](docs/user-guide.md): setup, what the agent does, reading the
-  report, fixing problems, privacy, troubleshooting.
+- [User guide](docs/user-guide.md): the workflow from review to deposit with
+  prompts to paste, setup details, privacy, and troubleshooting.
 - [Contributing](CONTRIBUTING.md): repository layout and tests.
 
 ## Source and caveats

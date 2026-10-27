@@ -1,217 +1,87 @@
 # User guide
 
-This guide walks you through using the AmNat reproducibility skill, from setup to
-depositing your archive. For a short list of steps and prompts to paste, see the
-[quick start](quick-start.md). It assumes you are comfortable running your own analysis
-code, but not necessarily with the terminal or with coding agents.
+A suggested workflow from first review to deposit, with prompts you can paste at
+each step, followed by reference sections. To get set up, follow the quick start in
+the [README](../README.md); [Setup details](#setup-details) below covers
+installing without git and other setup questions.
 
 The skill is an optional pre-submission aid. It does not submit anything to the
 journal, and passing it does not guarantee acceptance: the journal's data editors
 make that decision.
 
-## Contents
+**Workflow**
 
-1. [What you need](#1-what-you-need)
-2. [Organise your project](#2-organise-your-project)
-3. [Install the skill](#3-install-the-skill)
-4. [Start a review](#4-start-a-review)
-5. [Answer the agent's first questions](#5-answer-the-agents-first-questions)
-6. [What the agent does](#6-what-the-agent-does)
-7. [Read the report](#7-read-the-report)
-8. [Fix problems](#8-fix-problems)
-9. [Wrap up](#9-wrap-up)
-10. [Before you deposit](#10-before-you-deposit)
-11. [Slow analyses](#11-slow-analyses)
-12. [Troubleshooting](#12-troubleshooting)
-13. [Privacy](#13-privacy)
-14. [Using the scripts without an agent](#14-using-the-scripts-without-an-agent)
+1. [Review](#1-review)
+2. [Read the report](#2-read-the-report)
+3. [Go through the mismatches](#3-go-through-the-mismatches)
+4. [Answer the to-do list](#4-answer-the-to-do-list)
+5. [Fix the archive](#5-fix-the-archive)
+6. [Correct the manuscript (optional)](#6-correct-the-manuscript-optional)
+7. [Wrap up](#7-wrap-up)
+8. [Deposit](#8-deposit)
 
-## 1. What you need
+[Tips](#tips)
 
-- **A coding agent**: either
-  [Claude Code](https://code.claude.com/docs) (Anthropic) or
-  [Codex](https://developers.openai.com/codex) (OpenAI), installed and signed in.
-  Both need an account; usage may cost money depending on your plan. Follow their
-  install instructions.
-- **Python 3**, for the skill's two helper scripts. Most Macs and Linux machines
-  have it; check with `python3 --version`. On Windows, install it from
-  [python.org](https://www.python.org/downloads/).
-- **The software your analysis uses** (R, Python packages, Julia, MATLAB, ...),
-  installed on the same computer, so the agent can rerun your code. If something is
-  missing the agent will still check what it can, and tell you what it could not
-  run.
-- **Your manuscript**, in any format (`.docx`, `.tex`, `.md`, `.qmd`, `.pdf`).
-  Optional, but without it the agent cannot check that your code reproduces the
-  paper.
+**Reference:**
+[Setup details](#setup-details) ·
+[Result statuses](#result-statuses) ·
+[Files the review creates](#files-the-review-creates) ·
+[Slow analyses](#slow-analyses) ·
+[Privacy](#privacy) ·
+[Troubleshooting](#troubleshooting) ·
+[Scripts without an agent](#scripts-without-an-agent)
 
-Plan on 15 minutes for a quick scan, and an hour or more for a full review of a
-typical project, plus the time your code takes to run.
+Before you start, work on a copy of your project or commit it to git, so you can
+always go back.
 
-## 2. Organise your project
+## 1. Review
 
-Make one folder for the paper, with a short name such as `selfing_speciation/`
-(the examples below use that name). Inside it, keep the paper and the archive side
-by side:
+In your project folder, start `claude` or `codex` and ask:
 
-```text
-selfing_speciation/
-├── ms_files/              your manuscript, supplement, and figure files
-│   ├── manuscript.docx
-│   └── supplement.docx
-└── data_and_code/         everything you will deposit on Dryad or Zenodo
-    ├── README.md          describes the data and code for readers (or README.txt)
-    ├── data/              raw data, e.g. CSV files
-    ├── code/              analysis scripts
-    └── outputs/           figures, tables, and results the code writes
-```
+> Do a full reproducibility review of this project using the
+> amnat-reproducibility skill. My manuscript and supplement are in ms_files/.
 
-- **`ms_files/`** can be organised however you like, with files of any name. The
-  agent reads it to find every result it needs to check. It is never part of the
-  archive.
-- **`data_and_code/`** is what you will deposit. The names inside it are only
-  suggestions; any sensible structure works.
-- **The README** that describes your data and code goes at the top of
-  `data_and_code/`, because it is deposited with them. Name it `README.md` or
-  `README.txt`. If you don't have one yet, the agent can draft one in the order the
-  journal requires.
+Before it reads anything, the agent asks:
 
-If your project is organised differently, that is fine: the agent will ask where
-your manuscript and archive are. If you move files to match this layout, rerun your
-code afterwards, because file paths in your scripts may need updating. (The agent
-can help with that.)
+1. **What may it read?** Everything; code, README, and manuscript but not data
+   contents; or only what you paste in. What it reads is sent to Anthropic or
+   OpenAI: see [Privacy](#privacy).
+2. **Are any data sensitive or restricted?** For example threatened-species
+   locations, personal data, Indigenous data, or data under a permit or license.
+   If so, it will not read those files and will go through sharing options with
+   you.
+3. **How deep should it go?** A quick scan (minutes), a full review (no files
+   changed), or a review followed by fixes you choose.
 
-## 3. Install the skill
+In a full review it scans the archive for common problems, checks every item of
+the journal's checklist, reruns your code in a fresh session, and checks every
+figure, table, and number in your manuscript and supplement against the rerun. It
+asks before starting anything slow, and asks you about figures that look drawn,
+photographed, or edited in a graphics program. Expect an hour or more, plus your
+code's run time.
 
-**Option A: with git (Mac, Linux, or Windows with Git Bash).** In a terminal:
+It does not change your data or results, and does not invent information such as
+units or citations: anything only you know goes on your to-do list.
 
-```sh
-git clone https://github.com/yanivjb/data_editor
-cd data_editor
-./install.sh /path/to/selfing_speciation
-```
+Other things you can ask for:
 
-This puts the skill in `selfing_speciation/.claude/skills/` (for Claude Code) and
-`selfing_speciation/.agents/skills/` (for Codex). To install it for all your projects
-instead, use `./install.sh --user`. To install for one tool only, add `--claude` or
-`--codex`.
+> Do a quick reproducibility scan before I submit.
 
-**Option B: without git.** On the GitHub page, click **Code → Download ZIP** and
-unzip it. Copy the folder `skills/amnat-reproducibility` into your project:
+> Write a README and codebook for the Dryad archive.
 
-- for Claude Code: `selfing_speciation/.claude/skills/amnat-reproducibility/`
-- for Codex: `selfing_speciation/.agents/skills/amnat-reproducibility/`
+> My brms model takes 8 hours. How should I archive it?
 
-Folders starting with a dot are hidden by default. On a Mac press
-<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>.</kbd> in Finder to show them; on Windows
-choose **View → Show → Hidden items** in File Explorer.
+## 2. Read the report
 
-To update later, repeat the same steps; the installer replaces the old copy.
+Two files appear at the top of your project folder:
 
-## 4. Start a review
+- `REPRODUCIBILITY_REPORT.md`: one page with the verdict, the results check, and
+  what to fix;
+- `AUTHOR_TODO.md`: checkboxes for what only you can supply or decide.
 
-Open a terminal in your project folder and start the agent:
-
-```sh
-cd /path/to/selfing_speciation
-claude        # Claude Code
-# or
-codex         # Codex
-```
-
-(Claude Code also runs in its desktop app and in VS Code; open the `selfing_speciation`
-folder there.)
-
-Then ask for what you want, in plain words. For example:
-
-- "Check this project against the AmNat data and code checklist."
-- "Do a quick reproducibility scan before I submit."
-- "Check that my code reproduces every result in the manuscript."
-- "Write a README and codebook for the Dryad archive."
-- "My brms model takes 8 hours. How should I archive it?"
-
-You can also call the skill by name: type `/amnat-reproducibility` in Claude Code,
-or `$amnat-reproducibility` in Codex.
-
-## 5. Answer the agent's first questions
-
-Before it reads your files, the agent asks:
-
-1. **What may it read?** Anything the agent reads is sent to the company that runs
-   it (Anthropic or OpenAI). Choose one:
-   - **everything**;
-   - **code, README, and manuscript, but not data contents**: the agent works from
-     file names, column names, and counts, and never prints your data;
-   - **only what you paste in**: the agent gives you commands to run and works from
-     the output you choose to share.
-
-   See [Privacy](#13-privacy) before choosing.
-2. **Are any data sensitive or restricted?** For example locations of threatened
-   species, personal or human-subject data, Indigenous data, or data under a permit
-   or license that limits sharing. If so, the agent will not read those files and
-   will go through options with you (see [Before you deposit](#10-before-you-deposit)).
-3. **How deep should it go?**
-   - **Quick scan**: an automated check and a short summary. Minutes.
-   - **Full review**: everything in the next section, ending in a written report.
-     Nothing is changed.
-   - **Review and fix**: a full review, then help fixing the items you choose.
-
-## 6. What the agent does
-
-In a full review, the agent:
-
-1. **Scans the archive** with a helper script for common problems: a missing or
-   incomplete README, absolute file paths, `setwd()`, packages loaded mid-script,
-   missing random seeds, data in Excel only, unclear column names, missing-value
-   codes, and analyses done in point-and-click software.
-2. **Reads your code and README**, works out the run order, and checks every item
-   of the journal's checklist.
-3. **Reruns your code** in a fresh session, logging every command it runs. It asks
-   before starting anything slow.
-4. **Checks the manuscript.** It lists every figure, table, and reported number in
-   your main text and supplement, finds the code that produces each one, and
-   compares the rerun with the paper. Each item is marked:
-
-   | Status | Meaning |
-   |--------|---------|
-   | match | the rerun gives the reported value (within sampling error for MCMC and other random results) |
-   | mismatch | the rerun gives a different value; both are shown |
-   | not found in code | nothing in the archive produces it |
-   | not rerun | the code exists but could not be run here, with the reason |
-   | edited after code | a code-made figure later polished in another program; the data shown are still checked |
-   | not computational | a diagram, drawing, or photo, confirmed with you |
-
-5. **Asks you about figures** that look drawn, photographed, or edited in a
-   graphics program, rather than guessing.
-
-It does **not** change your data, change results, or invent information such as
-units, citations, or who collected the data. Where it needs something only you
-know, it adds the item to `AUTHOR_TODO.md` and asks you. The archive README only
-ever contains finished text for readers: no to-dos, checklist codes, or notes
-about the review.
-
-## 7. Read the report
-
-You get two files at the top of your project folder:
-
-| File | Contents |
-|------|----------|
-| `REPRODUCIBILITY_REPORT.md` | one page: the verdict, the results check, and what to fix |
-| `AUTHOR_TODO.md` | checkboxes for what only you can supply or decide (package versions, citation, how a figure was made, ...) |
-
-Everything else is in `reproducibility_review/`, which you only need if you want
-the details:
-
-| File | Contents |
-|------|----------|
-| `full_report.md` | every finding with its checklist item and evidence, and the full table of manuscript results |
-| `runlog.md` | every command the agent ran, how long it took, and whether it worked |
-| `audit.md` | the automated scan |
-| `manuscript_items.md` | the figures, tables, and numbers found in your manuscript |
-| `work/` | the agent's scratch files; safe to delete when you are done |
-
-Nothing from the review is put in `data_and_code/` or `ms_files/`.
-
-A short report for one of the test projects in this repository looks like this:
+The details are in `reproducibility_review/` (see
+[Files the review creates](#files-the-review-creates)). A short report for one of
+the test projects in this repository looks like this:
 
 > **Verdict.** The code runs and reproduces Table 1 and Figure 2. One number in the
 > Results differs from the code and one has no code. The README needs a citation,
@@ -232,119 +102,243 @@ A short report for one of the test projects in this repository looks like this:
 > Checked: all code and data; everything was rerun. Details:
 > `reproducibility_review/full_report.md`.
 
-A mismatch is often a typo in the manuscript rather than a problem in the code.
-The agent reports it either way and leaves it to you to decide which is right.
+## 3. Go through the mismatches
 
-In the full report each finding cites a checklist item, e.g. `CODE-2` (relative
-paths) or `DATA-5` (Excel sheets saved as CSV); the full list is in
-[`references/amnat-checklist.md`](../skills/amnat-reproducibility/references/amnat-checklist.md).
+Mismatches between the paper and the code matter most. Take them one at a time:
 
-## 8. Fix problems
+> Walk me through the mismatches one at a time, starting with any that change a
+> conclusion. For each, show me where it is in the manuscript and in the code
+> output, and what you think caused it.
 
-Ask the agent to fix the items you choose, e.g. "Fix the required items except the
-README; I'll write that myself." It can:
+> Is this a typo, or did the manuscript come from an earlier version of the
+> analysis?
 
-- draft a README in the journal's required order, and a codebook of your variables;
-- save each Excel sheet as a CSV and point your code at it;
-- replace absolute paths with relative ones;
-- add random seeds and labels linking code to figure and table numbers;
-- set up quick and full run modes for slow analyses;
-- write a scripted version of a point-and-click analysis.
+> Where is this in the compiled HTML? I want to check it myself.
 
-It shows you each change. If you ask it to correct the manuscript, it works on
-copies in `revised_manuscript/` and makes every change a Word tracked change, with
-a comment saying where each new number comes from, so you and your coauthors can
-review, accept, or reject each one. Your original files are never changed.
+A mismatch is often a typo in the manuscript, but it can also mean the paper
+reports an older analysis, or that the code changed. Decide for each one which is
+right; the agent will not decide for you.
+
+## 4. Answer the to-do list
+
+> Here are my answers to AUTHOR_TODO.md: ...
+
+> I don't know this one yet. Leave it on the list and move on.
+
+If you find an error in your data, such as two beetles with the same ID:
+
+> Beetle B017 in the mass sheet is a different individual. Correct it in the code,
+> not the raw file, and tell me what it changes.
+
+The agent makes the correction in a labelled step in the code, so readers can see
+it, and describes it in the README.
+
+## 5. Fix the archive
+
+> Fix the required items in data_and_code/. Show me each change before you make it.
+
+> Fix the required items except the README; I'll write that myself.
+
+> Write the README for readers: no notes to me, no checklist codes.
+
+> Rerun everything from scratch and confirm the results did not change.
+
+The agent can draft a README in the journal's required order and a codebook of
+your variables, save Excel sheets as CSV, replace absolute paths, add random seeds
+and labels linking code to figures and tables, set up quick and full run modes for
+slow analyses, and script an analysis you did by pointing and clicking.
 
 Two things to watch:
 
 - **Adding a random seed changes random results slightly.** Regenerate the affected
   numbers from the seeded code and update the manuscript.
-- **Rewriting a point-and-click analysis as a script can change results.** The
-  agent reports any difference; decide with your coauthors how to report it.
+- **Scripting a point-and-click analysis can change results.** The agent reports
+  any difference; decide with your co-authors how to report it.
 
-When you are done, ask for the review again to confirm the fixes.
+If you are still writing the analysis:
 
-If you are still writing the analysis, ask the agent to add the skill's short
-coding rules to your project's `AGENTS.md` or `CLAUDE.md`. Coding agents working
-in your project will then follow them from the start.
+> Add the skill's coding rules to this project's AGENTS.md (or CLAUDE.md).
 
-## 9. Wrap up
+Coding agents working in your project will then follow them from the start.
 
-When you are done, ask the agent to wrap up. It will:
+## 6. Correct the manuscript (optional)
 
-- rerun everything with the final code and data and regenerate every figure and
-  table, so nothing in the manuscript comes from an earlier version of the
-  analysis;
-- tell you before it replaces or deletes any of your files, and how to get them
-  back;
-- write `WHAT_CHANGED.md`, a summary of every change to send to co-authors;
-- update `AUTHOR_TODO.md` to list only what is left;
-- delete its scratch files, keeping the full report and run log as a record of
-  what was checked.
+Only for corrections you have decided on:
 
-## 10. Before you deposit
+> Make tracked-change copies of the manuscript and supplement in
+> revised_manuscript/ for the corrections we agreed. Add a Word comment to each
+> changed number saying where the new value comes from.
 
-- **Keep only what is needed** in `data_and_code/`: README, data, code, and any
-  outputs readers need. Remove `.Rhistory`, `.DS_Store`, caches, drafts, and
-  manuscript files.
-- **Deposit in Dryad or Zenodo.** A GitHub repository alone does not count, but a
-  GitHub release archived on Zenodo does. Fill in every metadata field, and get a
-  private reviewer link to give the journal at submission.
-- **Sensitive data**: share a coarsened or de-identified version (e.g. coordinates
-  rounded to a grid), use controlled access, or explain how to obtain the data.
-  Say in the README what was withheld or changed and why, and raise it with the
-  editor at submission. The agent can help write the de-identification script and
-  the README text; do the de-identification outside `data_and_code/`, so the
-  original data never end up in the archive.
-- **Check the current journal policy** in the
+> For the result that is no longer significant, suggest wording in a comment, but
+> don't change my interpretation.
+
+Every change is a Word tracked change in a copy; your originals are not touched.
+Review the changes in Word, and accept or reject them yourself.
+
+## 7. Wrap up
+
+> We're done. Rerun everything from scratch with the final code and data,
+> regenerate every figure and table, and check they still match the manuscript.
+
+This matters most if anything changed during the review (a data correction, a code
+fix, a new R version): figures made before the change will be out of date.
+
+> Put the tracked copies back in ms_files/, replacing the old versions. Don't accept
+> any tracked changes; I'll do that. Tell me first how I can get the old versions
+> back.
+
+> Write WHAT_CHANGED.md: a summary of every change I can send to my co-authors.
+
+> Update AUTHOR_TODO.md so it lists only what is left for me.
+
+> Clean up: delete the scratch files, keep the full report and run log, and list
+> what you deleted.
+
+Afterwards your project folder holds your own folders plus `AUTHOR_TODO.md`,
+`WHAT_CHANGED.md`, `REPRODUCIBILITY_REPORT.md`, and a small
+`reproducibility_review/` folder recording what was checked.
+
+## 8. Deposit
+
+> Do a final check before I deposit: is AUTHOR_TODO.md done, is the README clean
+> for readers, and is data_and_code/ free of clutter?
+
+Then, yourself:
+
+- deposit `data_and_code/` on **Dryad or Zenodo** (a GitHub repository alone does
+  not count; a GitHub release archived on Zenodo does), filling in every metadata
+  field;
+- put the private reviewer link in your submission;
+- if any data are withheld or de-identified, say so in the README and raise it with
+  the editor at submission;
+- check the current
   [Instructions for Authors](https://www.journals.uchicago.edu/journals/an/instruct).
 
-The agent never uploads or deposits anything: you do that yourself.
+The agent never uploads or deposits anything.
 
-## 11. Slow analyses
+## Tips
+
+- **Short answers are fine.** "Yes", "separate individuals", "move on" all work.
+  If you say move on, the agent records the open point and continues.
+- **Ask to see evidence.** "Show me the output", "which line?", "how did you get
+  that number?"
+- **If the agent goes off track,** say so plainly: "Stop. Don't edit the raw
+  data." It should follow you.
+
+---
+
+## Setup details
+
+**What you need.**
+[Claude Code](https://code.claude.com/docs) or
+[Codex](https://developers.openai.com/codex), installed and signed in (both need an
+account; usage may cost money depending on your plan); Python 3 (check with
+`python3 --version`; on Windows install it from
+[python.org](https://www.python.org/downloads/)); and the software your analysis
+uses, on the same computer, so the agent can rerun your code.
+
+**Project layout.** One folder per paper, e.g. `selfing_speciation/`, containing:
+
+```text
+selfing_speciation/
+├── ms_files/              manuscript, supplement, and figure files; any names
+└── data_and_code/         what you will deposit on Dryad or Zenodo
+    ├── README.md          describes the data and code for readers (or README.txt)
+    ├── data/
+    ├── code/
+    └── outputs/
+```
+
+The names inside `data_and_code/` are suggestions. The README describing your data
+and code goes at the top of `data_and_code/`, because it is deposited with them.
+If your project is organised differently, the agent will ask where things are; if
+you move files to match this layout, rerun your code, since paths in your scripts
+may need updating.
+
+**Installing.** With git: `git clone https://github.com/yanivjb/data_editor`, then
+`data_editor/install.sh /path/to/selfing_speciation`. Use `--user` instead of a
+path to install for all your projects, and `--claude` or `--codex` for one tool.
+Without git: on the GitHub page click **Code → Download ZIP**, unzip it, and copy
+`skills/amnat-reproducibility` into `selfing_speciation/.claude/skills/` (Claude
+Code) or `selfing_speciation/.agents/skills/` (Codex). Folders starting with a dot
+are hidden: on a Mac press <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>.</kbd> in Finder;
+on Windows choose **View → Show → Hidden items**. To update, repeat the install.
+
+**Starting the agent.** `cd /path/to/selfing_speciation`, then `claude` or `codex`.
+Claude Code also runs in its desktop app and in VS Code: open the project folder
+there. You can call the skill by name with `/amnat-reproducibility` (Claude Code)
+or `$amnat-reproducibility` (Codex).
+
+## Result statuses
+
+Each figure, table, and number in the manuscript is marked:
+
+| Status | Meaning |
+|--------|---------|
+| match | the rerun gives the reported value (within sampling error for MCMC and other random results) |
+| mismatch | the rerun gives a different value; both are shown |
+| not found in code | nothing in the archive produces it |
+| not rerun | the code exists but could not be run here, with the reason |
+| edited after code | a code-made figure later polished in another program; the data shown are still checked |
+| not computational | a diagram, drawing, or photo, confirmed with you |
+
+In the full report each finding also cites a checklist item, e.g. `CODE-2`
+(relative paths) or `DATA-5` (Excel sheets saved as CSV); the list is in
+[`references/amnat-checklist.md`](../skills/amnat-reproducibility/references/amnat-checklist.md).
+
+## Files the review creates
+
+| File | Contents |
+|------|----------|
+| `REPRODUCIBILITY_REPORT.md` | one-page summary |
+| `AUTHOR_TODO.md` | what only you can supply or decide |
+| `WHAT_CHANGED.md` | summary of all changes, written when you wrap up |
+| `revised_manuscript/` | tracked-change copies, only if you ask for manuscript corrections |
+| `reproducibility_review/full_report.md` | every finding with evidence, and the full table of manuscript results |
+| `reproducibility_review/runlog.md` | every command the agent ran, and whether it worked |
+| `reproducibility_review/audit.md` | the automated scan |
+| `reproducibility_review/manuscript_items.md` | figures, tables, and numbers found in the manuscript |
+| `reproducibility_review/work/` | scratch files; safe to delete |
+
+Nothing from the review is put in `data_and_code/` or `ms_files/` unless you ask.
+
+## Slow analyses
 
 If part of your analysis takes hours or days (MCMC, large simulations, SLiM,
-bioinformatics pipelines), the recommended setup is:
-
-1. the full code, with the settings and seeds used for the paper;
-2. the full outputs of the slow steps, archived, which your figure and table code
-   reads in;
-3. a quick mode that runs the slow steps at reduced scale in minutes, to show the
-   code works.
-
-The agent will not start a long run without asking. It runs the quick mode, reruns
-everything downstream of the archived outputs, and marks the slow steps "not
-rerun". Details for Bayesian models, simulations, SLiM, and pipelines are in
+bioinformatics pipelines), archive the full code with its settings and seeds, the
+full outputs of the slow steps (which your figure and table code reads in), and a
+quick mode that runs the slow steps at reduced scale in minutes. The agent will
+not start a long run without asking; it runs the quick mode, reruns everything
+downstream of the archived outputs, and marks the slow steps "not rerun". Details
+are in
 [`references/long-computations.md`](../skills/amnat-reproducibility/references/long-computations.md).
 
-## 12. Troubleshooting
+## Privacy
+
+- Your code runs on your computer. What leaves it is what the agent reads: file
+  contents, command output, and the helper scripts' reports, sent to Anthropic
+  (Claude Code) or OpenAI (Codex) under your account's terms.
+- Before letting it read everything, check your institution's rules, any data-use
+  agreement, and your agent account's data settings.
+- With "not data contents", the scan reports only column names, counts, and types.
+- The agent never uploads, pushes, posts, or deposits anything.
+
+## Troubleshooting
 
 | Problem | What to do |
 |---------|------------|
-| The agent does not seem to use the skill | Call it by name (`/amnat-reproducibility` in Claude Code, `$amnat-reproducibility` in Codex). Check that the skill folder is in `.claude/skills/` or `.agents/skills/` inside the folder where you started the agent. |
-| Many items are "not rerun" because R, MATLAB, etc. are missing | Run the agent on the computer where your analysis normally runs. Or run the commands the agent gives you and share the output. |
-| R packages fail to load | Install them, or use `renv` (`renv::restore()`) if your project has an `renv.lock`. The agent can help set up `renv`. |
-| The report lists many findings | Start with the required fixes. Many recommended items are quick, but none are mandatory. |
+| The agent does not seem to use the skill | Call it by name (`/amnat-reproducibility` or `$amnat-reproducibility`). Check the skill folder is in `.claude/skills/` or `.agents/skills/` inside the folder where you started the agent. |
+| Many items are "not rerun" because R, MATLAB, etc. are missing | Run the agent on the computer where your analysis normally runs, or run the commands it gives you and share the output. |
+| R packages fail to load | Install them, or run `renv::restore()` if your project has an `renv.lock`. The agent can help set up `renv`. |
+| The report lists many findings | Start with the required fixes. Recommended items are optional. |
 | A finding is wrong | The scan uses pattern matching and makes mistakes. Tell the agent; it should check by reading the code. |
 | The PDF manuscript cannot be read | Install `pdftotext` (part of poppler), or put a `.docx`, `.md`, or `.txt` version in `ms_files/`. |
-| Your code changed while fixing and a number moved | Ask the agent to compare the before and after outputs; it keeps a log. Do not report numbers you have not regenerated. |
-| `reproducibility_review/work/` is large | It holds the agent's rerun copies and logs. Delete it once you have the reports, or ask the agent to. |
+| A number moved while fixing | Ask the agent to compare the before and after outputs; it keeps a log. Do not report numbers you have not regenerated. |
+| `reproducibility_review/work/` is large | Delete it once you have the reports, or ask the agent to. |
 
-## 13. Privacy
+## Scripts without an agent
 
-- Your code **runs on your computer**. What leaves it is what the agent reads:
-  file contents, command output, and the helper scripts' reports. These are sent to
-  Anthropic (Claude Code) or OpenAI (Codex) under your account's terms.
-- Before choosing "everything", check your institution's rules, any data-use
-  agreement, and your agent account's data settings.
-- With "not data contents", the helper script runs with `--no-values` and reports
-  only column names, counts, and types.
-- The agent never uploads, pushes, posts, or deposits anything.
-
-## 14. Using the scripts without an agent
-
-Both helper scripts need only Python 3 and work on their own:
+The helper scripts need only Python 3:
 
 ```sh
 # scan the archive; writes selfing_speciation/reproducibility_review/audit.md
@@ -355,6 +349,9 @@ python3 path/to/amnat-reproducibility/scripts/audit_archive.py selfing_speciatio
 
 # list the figures, tables, and numbers in the manuscript
 python3 path/to/amnat-reproducibility/scripts/manuscript_items.py selfing_speciation/ms_files --out selfing_speciation/reproducibility_review/manuscript_items.md
+
+# apply edits to a copy of a Word file as tracked changes (see the script's header for the format)
+python3 path/to/amnat-reproducibility/scripts/docx_track_changes.py ms_files/manuscript.docx edits.json --out revised_manuscript/manuscript_tracked.docx
 ```
 
 The scan finds leads, not verdicts. It cannot run your code or check results
