@@ -423,8 +423,18 @@ in plain language, with no checklist IDs or jargon (write "Summary", not
    before recommended. Group similar findings ("12 column names contain spaces").
 4. **What we need from you**: "See `AUTHOR_TODO.md` (5 items)."
 5. One line on what was and was not checked (what you were allowed to read, which
-   steps were not rerun and why), and a pointer to
-   `reproducibility_review/full_report.md` for the details.
+   steps were not rerun and why).
+6. **Inside `reproducibility_review/`**, a few short lines saying what each file
+   is and when to open it:
+   - `full_report.md`: every finding with its evidence, every change made and
+     its effect on results, and the table comparing each manuscript number with
+     the code's output. Open it when a to-do item is unclear, or when a co-author
+     asks how you know a result matches.
+   - `runlog.md`: every command run, with its exit status and outputs; the proof
+     behind each "match". Needed only if a result is questioned.
+   - `audit.md`: the automated scan. Its items are leads, not a list of problems;
+     some are deliberate choices (say which, if any).
+   - `work/`: scratch files; safe to ignore or delete.
 
 **`reproducibility_review/full_report.md`** holds everything else: the privacy and
 sensitive-data answers (`PRIV-1`, `SENS-1`); every finding with its checklist ID,

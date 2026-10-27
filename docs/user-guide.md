@@ -320,11 +320,11 @@ In the full report each finding also cites a checklist item, e.g. `CODE-2`
 | `AUTHOR_TODO.md` | what only you can supply or decide |
 | `WHAT_CHANGED.md` | summary of all changes, written when you wrap up |
 | `revised_manuscript/` | tracked-change copies, only if you ask for manuscript corrections |
-| `reproducibility_review/full_report.md` | every finding with evidence, and the full table of manuscript results |
-| `reproducibility_review/runlog.md` | every command the agent ran, and whether it worked |
-| `reproducibility_review/audit.md` | the automated scan |
+| `reproducibility_review/full_report.md` | every finding with evidence, every change and its effect on results, and the full table of manuscript results. Open it when a to-do item is unclear, or a co-author asks how you know a result matches. |
+| `reproducibility_review/runlog.md` | every command the agent ran, with exit status and outputs: the proof behind each "match". Needed only if a result is questioned. |
+| `reproducibility_review/audit.md` | the automated scan. Its items are leads, not a list of problems; some may be deliberate choices. |
 | `reproducibility_review/manuscript_items.md` | figures, tables, and numbers found in the manuscript |
-| `reproducibility_review/work/` | scratch files; safe to delete |
+| `reproducibility_review/work/` | scratch files; safe to ignore or delete |
 
 Nothing from the review is put in `data_and_code/` or `ms_files/` unless you ask.
 
