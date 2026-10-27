@@ -38,12 +38,13 @@ In every mode, ask the privacy and sensitive-data questions in "Before you start
 first, before the audit script or anything else reads the author's files. Respect
 the choice of mode. Do not start editing during a scan or review.
 
-**The person in the chat may not be the author.** A co-author, student, or data
-editor may run the review and hand the results to authors who never saw the
-conversation. Write every author-facing file (`REPRODUCIBILITY_REPORT.md`,
-`AUTHOR_TODO.md`, `WHAT_CHANGED.md`) so it stands alone: plain language, no
-checklist IDs, no references to the chat ("as discussed"), and enough context
-that someone opening it cold knows what to do.
+**Write the author-facing files to stand alone.** The author runs the review, but
+`REPRODUCIBILITY_REPORT.md`, `AUTHOR_TODO.md`, and `WHAT_CHANGED.md` are often
+shared with co-authors who never saw the conversation, or reopened weeks later.
+Use plain language, no checklist IDs, no references to the chat ("as discussed"),
+and enough context that someone opening a file cold knows what to do. Still help
+the author with the fixes in the session; the files are a record, not a
+substitute.
 
 **Coming back after changes.** If the project already has a
 `reproducibility_review/` folder, this is a re-review. Read the previous

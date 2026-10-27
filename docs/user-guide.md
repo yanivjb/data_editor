@@ -138,9 +138,10 @@ If you find an error in your data, such as two beetles with the same ID:
 The agent makes the correction in a labelled step in the code, so readers can see
 it, and describes it in the README.
 
-If someone else will do the fixes, such as a co-author or student, the report and
-`AUTHOR_TODO.md` are written to make sense without the conversation: send them the
-project folder. When the changes are made, open the project again and ask:
+The report and `AUTHOR_TODO.md` are written to make sense without the
+conversation, so you can share them with co-authors, or split the to-do list among
+them. When changes have been made, perhaps days later, open the project again and
+ask:
 
 > Check this project against the AmNat checklist again. What's fixed, and what's
 > still open?
