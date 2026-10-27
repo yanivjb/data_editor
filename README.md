@@ -16,6 +16,12 @@ prompts), and see the [user guide](docs/user-guide.md) for setup and details.
 
 ## Quick start
 
+The five steps below get a first review running. For the whole process, see the
+**[full quick start](docs/quick-start.md)**: a suggested workflow from first
+review to deposit (going through mismatches, answering the to-do list, fixing the
+archive, correcting the manuscript with tracked changes, and wrapping up), with
+prompts you can paste at each step.
+
 1. Install [Claude Code](https://code.claude.com/docs) or
    [Codex](https://developers.openai.com/codex), and Python 3.
 2. Put your manuscript in `my_paper/ms_files/` and your data and code in
@@ -33,6 +39,8 @@ prompts), and see the [user guide](docs/user-guide.md) for setup and details.
 5. Answer its questions about what it may read and whether any data are
    sensitive. Read the one-page `REPRODUCIBILITY_REPORT.md` and work through
    `AUTHOR_TODO.md`; details are in `reproducibility_review/`.
+6. Carry on with the [full quick start](docs/quick-start.md) for what to do next
+   and suggested prompts.
 
 ## What it does
 
