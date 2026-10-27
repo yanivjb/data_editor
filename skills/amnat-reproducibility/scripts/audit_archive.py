@@ -7,6 +7,10 @@ Uses only the Python standard library.
 
 Usage:
     python3 audit_archive.py PROJECT_DIR [--out REPORT.md] [--json]
+
+If PROJECT_DIR contains a data_and_code/ folder, that folder is scanned as the
+archive. A ms_files/ folder (the manuscript) is never scanned. A relative --out
+path is written to PROJECT_DIR, outside the archive.
 """
 
 import argparse
@@ -21,8 +25,9 @@ from pathlib import Path
 SKIP_DIRS = {
     ".git", ".hg", ".svn", "renv", "packrat", "node_modules", ".venv", "venv",
     "env", "__pycache__", ".ipynb_checkpoints", ".Rproj.user", ".quarto",
-    ".claude", ".agents", ".codex",
+    ".claude", ".agents", ".codex", "ms_files",
 }
+ARCHIVE_DIR = "data_and_code"
 CODE_EXT = {".r", ".rmd", ".qmd", ".py", ".ipynb", ".m", ".jl", ".sh", ".do", ".sas"}
 TABLE_EXT = {".csv", ".tsv"}
 EXCEL_EXT = {".xlsx", ".xlsm", ".xls", ".ods"}
@@ -166,7 +171,7 @@ def check_code(audit, path, all_files):
             continue
         n_code += 1
         if SETWD.search(code):
-            audit.add("CODE-2", "REQ", "Working directory set in code; use paths relative to the project root.", audit.rel(path, n))
+            audit.add("CODE-2", "REQ", "Working directory set in code; use paths relative to the archive root.", audit.rel(path, n))
         if ABS_PATH.search(code):
             audit.add("CODE-2", "REQ", f"Absolute path: `{code.strip()[:100]}`", audit.rel(path, n))
         if RM_ALL.search(code):
@@ -207,7 +212,7 @@ def check_read_target(audit, script, line, target, all_files, from_root=False):
         return  # already reported as an absolute path
     candidates = [audit.root / target] if from_root else [script.parent / target, audit.root / target]
     if not any(c.resolve() in all_files for c in candidates):
-        audit.add("DATA-1", "REQ", f"Code reads `{target}`, which is not in the project.", audit.rel(script, line))
+        audit.add("DATA-1", "REQ", f"Code reads `{target}`, which is not in the archive.", audit.rel(script, line))
 
 
 def sniff_reader(path, handle):
@@ -317,7 +322,7 @@ def check_readme(audit, files):
     readmes = [f for f in files if f.parent == audit.root and f.stem.lower() == "readme"]
     if not readmes:
         nested = [f for f in files if f.stem.lower() == "readme"]
-        msg = "No README in the project root."
+        msg = "No README in the archive root."
         if nested:
             msg += f" Found: {fmt_list([audit.rel(f) for f in nested])}"
         audit.add("DOC-1", "REQ", msg)
@@ -350,9 +355,10 @@ def main():
     ap.add_argument("--out", type=Path, help="write the Markdown report here instead of stdout")
     ap.add_argument("--json", action="store_true", help="print findings as JSON")
     args = ap.parse_args()
-    root = args.project.resolve()
-    if not root.is_dir():
-        sys.exit(f"Not a directory: {root}")
+    project = args.project.resolve()
+    if not project.is_dir():
+        sys.exit(f"Not a directory: {project}")
+    root = project / ARCHIVE_DIR if (project / ARCHIVE_DIR).is_dir() else project
 
     audit = Audit(root)
     files = [p for p in walk(root) if p.is_file()]
@@ -409,7 +415,7 @@ def main():
         return
     report = render(audit, readme)
     if args.out:
-        out = args.out if args.out.is_absolute() else root / args.out
+        out = args.out if args.out.is_absolute() else project / args.out
         out.write_text(report, encoding="utf-8")
         print(f"Wrote {out} ({len(audit.findings)} findings)")
     else:

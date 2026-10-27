@@ -20,7 +20,11 @@ being written, when fixes are cheap.
 - **Reviews** the project against every checklist item and writes a report that
   separates required fixes from recommendations, with file and line evidence.
 - **Runs** the code in a fresh session where possible and records whether it
-  finishes and reproduces the outputs.
+  finishes.
+- **Checks the paper is reproduced**: it reads your manuscript and supplement,
+  lists every figure, table, and reported number, traces each one to the code
+  that makes it, and records whether the rerun matches (e.g. "38 of 41 items
+  reproduced; 2 not found in code; 1 mismatch").
 - **Helps fix**, with your approval: drafts a README and codebook, exports Excel
   sheets to CSV, replaces absolute paths, adds seeds and figure/table labels, and
   sets up quick/full run modes for long analyses.
@@ -28,6 +32,25 @@ being written, when fixes are cheap.
 It does not change your data values or results. It also does not invent metadata
 such as units, citations, or who collected the data; it leaves `TODO(author)` for
 you to fill in.
+
+## Recommended project layout
+
+Keep the paper next to, but outside, the archive you will deposit:
+
+```text
+project_name/
+├── ms_files/                  manuscript in any format (.docx, .tex, .qmd, .md, .pdf),
+│                              plus figures, tables, supplements: any structure
+├── data_and_code/             the archive to deposit: README.md, data, code,
+│                              outputs, intermediate files, in any sensible structure
+├── .claude/skills/amnat-reproducibility/   added by ./install.sh (Claude Code)
+└── .agents/skills/amnat-reproducibility/   added by ./install.sh (Codex)
+```
+
+The skill reads `ms_files/` to find every result it must reproduce, and audits
+only `data_and_code/`. The manuscript is optional; without it, the skill can
+check the archive but not whether it reproduces the paper. Other layouts work
+too; the agent will ask where things are.
 
 ## Long analyses
 
@@ -42,7 +65,7 @@ at reduced scale in minutes. See
 ```sh
 git clone https://github.com/yanivjb/data_editor
 cd data_editor
-./install.sh /path/to/your/project   # Claude Code and Codex, this project only
+./install.sh /path/to/project_name   # Claude Code and Codex, this project only
 ./install.sh --user                  # Claude Code and Codex, all your projects
 ./install.sh --claude --user         # Claude Code only
 ```
@@ -63,10 +86,11 @@ In Claude Code you can also type `/amnat-reproducibility`; in Codex, `$amnat-rep
 or `/skills`. The agent asks how deep you want to go: a quick scan, a full review,
 or a review with guided fixes.
 
-To run only the scan, with no agent:
+To run the scripts with no agent:
 
 ```sh
-python3 skills/amnat-reproducibility/scripts/audit_archive.py /path/to/project
+python3 skills/amnat-reproducibility/scripts/audit_archive.py /path/to/project_name
+python3 skills/amnat-reproducibility/scripts/manuscript_items.py /path/to/project_name/ms_files
 ```
 
 ## Contents
@@ -77,7 +101,9 @@ skills/amnat-reproducibility/
 ├── references/
 │   ├── amnat-checklist.md         the journal checklist, with item IDs
 │   └── long-computations.md       Bayesian, simulation, and pipeline guidance
-├── scripts/audit_archive.py       automated scan
+├── scripts/
+│   ├── audit_archive.py           automated scan of the archive
+│   └── manuscript_items.py        lists figures, tables, and numbers in the paper
 └── templates/
     ├── README_template.md         README in the journal's required order
     ├── codebook_template.csv      variable-level codebook
