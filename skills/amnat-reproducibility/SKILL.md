@@ -52,9 +52,9 @@ These protect the scientific record. Do not break them, even when asked casually
    accepting it.
 3. **Never invent metadata.** Citations, author contacts, who collected the data,
    units, missing-value codes, permits, funding, and variable meanings come from
-   the author or from the project's own files. If you cannot find a value, write
-   `TODO(author): ...` and list it in your report. A plausible guess presented as
-   fact is worse than a visible gap.
+   the author or from the project's own files. If you cannot find a value, add it
+   to `AUTHOR_TODO.md` (see rule 8). A plausible guess presented as fact is worse
+   than a visible gap.
 4. **Ask before acting.** Auditing is read-only. Present the report first, then fix
    only what the author approves. Do not delete files; propose moving unused
    material to an `extra/` folder or a script coda (`CODE-11`, `ARCH-5`) instead.
@@ -70,6 +70,26 @@ These protect the scientific record. Do not break them, even when asked casually
    sent to your model provider, so ask first (see "Before you start"). Never
    upload, deposit, push, email, or post anything; those are the author's actions
    (`PRIV-4`).
+8. **The archive is for readers; notes are for the author.** Files in the archive
+   (README, codebook, code comments) contain only finished, reader-facing content:
+   what the files are, what the variables mean, how to run the code. Never put
+   these in the archive:
+   - `TODO`s, placeholders, or questions for the author;
+   - checklist IDs (`DOC-2`, `DATA-12`, ...) or mentions of this review, the
+     checklist, or the journal's data editor;
+   - the history of how a fact was established ("the author confirmed", "no data
+     were converted", "import behaviour has not been changed", "not a verified
+     rerun");
+   - audit detail such as line numbers of odd values, or links to files outside
+     the archive (`../REPRODUCIBILITY_RUNLOG.md`).
+
+   Write confirmed facts plainly ("Leaf area is in cm²", "Blank cells are missing
+   values"). Everything still to do goes in `AUTHOR_TODO.md` in the project folder,
+   outside the archive, based on
+   [templates/AUTHOR_TODO_template.md](templates/AUTHOR_TODO_template.md): one
+   checkbox per item, saying what is needed, where it goes, and why. Leave a
+   README section out until its content is known, rather than filling it with a
+   placeholder; list it in `AUTHOR_TODO.md` instead.
 
 ## Workflow
 
@@ -288,8 +308,8 @@ show it in chat if the author prefers), with:
 2. **Required fixes**: failing or partial REQ items, each with ID, evidence, and the
    concrete change needed.
 3. **Recommended improvements**: REC items, briefly.
-4. **Questions for the author**: every `TODO(author)` item (metadata you could not
-   find).
+4. **Questions for the author**: a short summary pointing to `AUTHOR_TODO.md`,
+   which holds the full list.
 5. **Clean-run results** from step 4, pointing to `REPRODUCIBILITY_RUNLOG.md`, and
    the **manuscript traceability table**, with its coverage summary, from step 5.
 6. A table of all checklist IDs with status.
@@ -300,9 +320,11 @@ Keep it short and specific. The author should be able to work through it in orde
 
 Typical fixes, each done only after the author agrees:
 
-- **README**: draft from [templates/README_template.md](templates/README_template.md),
-  filled from project files, with `TODO(author)` for anything unknown. Keep the
-  required section order.
+- **README**: draft from [templates/README_template.md](templates/README_template.md)
+  using only confirmed information, in the required section order and following
+  rule 8. Put every gap in `AUTHOR_TODO.md`. Before finishing, reread the README
+  as a stranger downloading the archive would: every sentence should help them
+  understand or run it.
 - **Codebook**: for each CSV, list every column with description, type, units, and
   allowed values or range ([templates/codebook_template.csv](templates/codebook_template.csv)).
   Compute types, ranges, levels, and missing-value counts from the data; get
@@ -362,6 +384,9 @@ Before the author deposits:
 - The archive folder (e.g. `data_and_code/`) contains only the README, data, code,
   and any intermediate outputs needed; no `.Rhistory`, `.DS_Store`, caches,
   personal notes, drafts, or manuscript files (`ARCH-5`).
+- Every item in `AUTHOR_TODO.md` is done, and the README reads as finished text
+  for readers: no placeholders, checklist IDs, or review notes (rule 8). Rerun the
+  audit script to check.
 - It goes to Dryad or Zenodo, not only GitHub (`ARCH-1`); all repository metadata
   fields are filled (`ARCH-2`); and the author gets a private reviewer link for
   submission (`ARCH-3`).

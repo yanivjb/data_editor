@@ -170,7 +170,9 @@ In a full review, the agent:
 
 It does **not** change your data, change results, or invent information such as
 units, citations, or who collected the data. Where it needs something only you
-know, it writes `TODO(author)` and asks you.
+know, it adds the item to `AUTHOR_TODO.md` and asks you. The archive README only
+ever contains finished text for readers: no to-dos, checklist codes, or notes
+about the review.
 
 ## 7. Read the report
 
@@ -180,6 +182,7 @@ The agent writes these files in your project folder, outside `data_and_code/`:
 |------|----------|
 | `REPRODUCIBILITY_REPORT.md` | the review: verdict, required fixes, recommendations, questions for you, and the manuscript check |
 | `REPRODUCIBILITY_RUNLOG.md` | every command the agent ran, with how long it took and whether it worked |
+| `AUTHOR_TODO.md` | a checklist of what only you can supply or decide (package versions, citation, how a figure was made, ...) |
 | `REPRODUCIBILITY_AUDIT.md` | the automated scan |
 | `MANUSCRIPT_ITEMS.md` | the figures, tables, and numbers found in your manuscript |
 
@@ -190,7 +193,9 @@ Work through the report in order:
    as CSV); the full list is in
    [`references/amnat-checklist.md`](../skills/amnat-reproducibility/references/amnat-checklist.md).
 2. **Recommended improvements**: good practice, not required.
-3. **Questions for you**: information only you have.
+3. **Questions for you**: information only you have, listed with checkboxes in
+   `AUTHOR_TODO.md`. Once you have the answers, ask the agent to put them in the
+   README.
 4. **The manuscript check**, with a summary such as "38 of 41 computational items
    reproduced; 2 not found in code; 1 mismatch".
 

@@ -17,6 +17,7 @@ skills/amnat-reproducibility/
 │   └── manuscript_items.py        lists figures, tables, and numbers in the paper
 └── templates/
     ├── README_template.md         README in the journal's required order
+    ├── AUTHOR_TODO_template.md    to-do list for authors, kept outside the archive
     ├── codebook_template.csv      variable-level codebook
     └── AGENTS_snippet.md          rules to add to a project's AGENTS.md/CLAUDE.md
 docs/user-guide.md                 guide for authors

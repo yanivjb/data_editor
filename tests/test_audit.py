@@ -21,6 +21,7 @@ EXPECTED = {
     ),
     "drift": ({"CODE-13", "DOC-2"}, set()),
     "languages": ({"CODE-2", "CODE-13", "DATA-1"}, set()),
+    "review_notes": ({"DOC-2"}, set()),
 }
 # example -> files that must (True) or must not (False) get a CODE-13 seed finding
 SEED_FILES = {
@@ -55,6 +56,11 @@ def main():
         for path, flagged in SEED_FILES.get(example, {}).items():
             if (path in seeds) != flagged:
                 failures.append(f"{example}: {path} seed finding should be {flagged}")
+        if example == "review_notes":
+            messages = " ".join(f["message"] for f in findings if f["item"] == "DOC-2")
+            for phrase in ("placeholders", "review notes"):
+                if phrase not in messages:
+                    failures.append(f"review_notes: README {phrase} not flagged")
         # The audit report must never include the manuscript folder.
         if any((f["where"] or "").startswith("ms_files") for f in findings):
             failures.append(f"{example}: scanned ms_files/")

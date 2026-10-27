@@ -63,8 +63,9 @@ being written, when fixes are cheap.
   sets up quick/full run modes for long analyses.
 
 It does not change your data values or results. It also does not invent metadata
-such as units, citations, or who collected the data; it leaves `TODO(author)` for
-you to fill in.
+such as units, citations, or who collected the data. Anything it needs from you
+goes in `AUTHOR_TODO.md`, outside the archive, so the README stays clean for
+readers.
 
 ## Recommended project layout
 

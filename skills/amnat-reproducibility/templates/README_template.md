@@ -1,137 +1,136 @@
-# TODO(author): Title of the data and code archive
-
 <!--
-Sections 1-6 are required by The American Naturalist, in this order (DOC-2).
-Sections 7 onward are recommended. Replace every TODO(author) with real
-information; do not leave guesses in place of facts. Delete these comments.
+INSTRUCTIONS FOR THE AGENT. Do not copy this block into the README.
+
+- This is the structure for the archive README. Sections 1-6 are required by the
+  journal, in this order. Later sections are optional: include them only when
+  they apply.
+- Replace each <angle-bracket placeholder> with confirmed information. If a value
+  is not known yet, leave that line or section out and add it to AUTHOR_TODO.md.
+  The finished README must contain no placeholders, TODOs, or HTML comments.
+- Write for a reader who downloads the archive. Do not mention the review, the
+  checklist or its item IDs, the data editor, the agent, or how a fact was
+  confirmed. Do not link to files outside the archive.
+- Example rows (site, mass_g, ...) show the format only; replace them.
 -->
 
-## 1. Citation
+# <Title of the paper>: data and code
 
-TODO(author): Authors. Year. Title. *The American Naturalist* volume:pages.
-DOI. (Use "In review" or "In press" before publication.)
+## Citation
 
-## 2. Authors and contact
+<Authors>. <Year>. <Title>. *<Journal>* <volume>:<pages>. <DOI>
 
-- TODO(author): Name, affiliation, email, ORCID
-- Corresponding author: TODO(author)
+<!-- Before publication, use e.g. "Manuscript in review at The American Naturalist." -->
 
-## 3. Study summary
+## Authors and contact
 
-TODO(author): Two to five sentences on the question, study system, and design.
+- <Name>, <affiliation>, <email>, <ORCID>
+- Corresponding author: <name>, <email>
 
-## 4. Responsibilities
+## Study summary
 
-- Data collection: TODO(author)
-- Code: TODO(author)
+<Two to five sentences: the question, the study system, and the design.>
 
-## 5. Files and variables
+## Responsibilities
+
+<Who collected the data, and who wrote the code.>
+
+## Files and variables
 
 ### Folder structure
 
 ```text
 .
-├── README.md          this file
-├── data/              raw data (CSV)
-├── code/              analysis scripts, run in the order below
-└── outputs/           figures, tables, and intermediate results written by the code
+├── README.md
+├── data/          raw data (CSV)
+├── code/          analysis scripts, run in the order below
+└── outputs/       figures, tables, and intermediate results written by the code
 ```
 
 ### Data files
 
-#### `data/example.csv`
+#### `data/<file>.csv`
 
-TODO(author): What one row represents, how and when the data were collected, and
-which analyses use the file. Missing values are coded as `NA`.
+<What one row represents, how and when the data were collected, and which
+analyses use the file. How it links to other files, e.g. "joins to
+`plants.csv` on `plant_id`".> Missing values are coded as `NA`.
 
 | Variable | Description | Type | Units / levels |
 |----------|-------------|------|----------------|
 | `site` | Sampling site | categorical | `A`, `B`, `C` |
 | `mass_g` | Fresh body mass | numeric | g |
 
-<!-- Repeat for every data file. A separate codebook CSV is acceptable
-(DATA-3); if you use one, name it here. Explain how files link to each other,
-e.g. "join on `plant_id`". -->
+<Repeat for every data file, or point to a codebook file.>
 
 ### Restricted or modified data
 
-<!-- Delete if all data are shared in full (SENS-4). -->
-
-TODO(author): Which data are withheld, coarsened, or de-identified; why (e.g.
-threatened-species locations, permit conditions, human-subject data); exactly
-what was changed (e.g. coordinates rounded to 0.1°); which results cannot be
-reproduced from the shared files; and how to request the full data.
+<Only if some data are withheld or changed for privacy or permits: what was
+withheld or changed (e.g. coordinates rounded to 0.1°), why, which results
+cannot be reproduced from the shared files, and how to request the full data.>
 
 ### Code files
 
 | File | Purpose | Reads | Writes | Manuscript output |
 |------|---------|-------|--------|-------------------|
-| `code/01_clean.R` | TODO(author) | `data/example.csv` | `outputs/clean.rds` | — |
-| `code/02_models.R` | TODO(author) | `outputs/clean.rds` | `outputs/fig1.pdf` | Figure 1, Table 1 |
+| `code/01_clean.R` | <purpose> | `data/<file>.csv` | `outputs/clean.rds` | — |
+| `code/02_models.R` | <purpose> | `outputs/clean.rds` | `outputs/fig1.pdf` | Figure 1, Table 1 |
 
 ### Output files
 
-TODO(author): List intermediate and final outputs, noting which are provided so
-slow steps need not be rerun (CODE-12).
+<Intermediate and final outputs, noting which are provided so slow steps need
+not be rerun.>
 
-## 6. Software and versions
+## Software and versions
 
-- Operating system: TODO(author)
-- R TODO(author) / Python TODO(author)
-- Packages: TODO(author). Paste the output of `sessionInfo()` in R or
-  `pip list --format freeze` in Python, or point to `renv.lock` /
-  `requirements.txt`.
+- Operating system: <OS and version>
+- <R or Python version>
+- Packages: <list with versions, or "see `renv.lock`" / "see `requirements.txt`">
 
-Packages installed by the scripts themselves: TODO(author) or "none".
+<Packages the scripts install themselves, if any.>
 
-## 7. How to reproduce the results
+## How to reproduce the results
 
-1. Download the archive and open a terminal in its top-level folder.
-2. Install the software listed in section 6.
-3. Run the scripts in order, for example:
+1. Open a terminal in this folder.
+2. Install the software listed above.
+3. Run the scripts in order:
 
    ```sh
    Rscript code/01_clean.R
    Rscript code/02_models.R
    ```
 
-TODO(author): Random seeds used, and how to start from the provided
-intermediate outputs instead of rerunning slow steps.
-
-### Figures not produced entirely by code
-
-<!-- Delete if every figure comes straight from the code (FIG-3). -->
-
-| Figure / panel | How it was made | Software | Code-made base file |
-|----------------|-----------------|----------|---------------------|
-| Figure 1 | Conceptual diagram, drawn by hand | TODO(author), e.g. Inkscape | — |
-| Figure 2 | Made by `code/04_figures.R`, then labels and layout edited; data unchanged | TODO(author), e.g. Illustrator | `outputs/fig2_base.pdf` |
-| Figure 3A | Photograph of study organism | — | — |
+<Random seeds used; how to start from the provided intermediate outputs.>
 
 ### Computational cost
 
-<!-- Needed if any step takes more than a few minutes. See
-references/long-computations.md in the reproducibility skill. -->
+<Only if a step takes more than a few minutes.>
 
 | Step | Full run time | Hardware | Quick mode | Archived outputs |
 |------|---------------|----------|------------|------------------|
-| `code/02_models.R` | TODO(author), e.g. 6 h | TODO(author), e.g. 4 cores, 16 GB RAM | `RUN_MODE=quick`, about 5 min | `outputs/full/model_fit.rds` |
+| `code/02_models.R` | about 6 h | 4 cores, 16 GB RAM | `RUN_MODE=quick`, about 5 min | `outputs/full/model_fit.rds` |
 
 By default the scripts run expensive steps in quick mode (results in
 `outputs/quick/`, for checking that the code works only) and build all reported
 figures and tables from the archived full outputs in `outputs/full/`. Run with
 `RUN_MODE=full` to regenerate the full outputs.
 
-## 8. License
+### Figures not produced entirely by code
 
-TODO(author): e.g. Code under the MIT License; data under CC0 1.0. (Not needed
-on Dryad, which sets the license at deposit.)
+<Only if some figures were drawn, photographed, or edited after the code made them.>
 
-## 9. Funding and permits
+| Figure / panel | How it was made | Software | Code-made base file |
+|----------------|-----------------|----------|---------------------|
+| Figure 1 | Conceptual diagram, drawn by hand | Inkscape | — |
+| Figure 2 | Made by `code/04_figures.R`; labels and layout edited, data unchanged | Illustrator | `outputs/fig2_base.pdf` |
+| Figure 3A | Photograph of the study organism | — | — |
 
-TODO(author): Funding sources and collection, animal care, or other permits, if
-applicable. (Not needed on Dryad, which records these at deposit.)
+## License
 
-## 10. Protocols
+<e.g. Code under the MIT License; data under CC0 1.0.>
 
-TODO(author): Links to protocols.io or other methods repositories, if any.
+## Funding and permits
+
+<Funding sources and collection, animal care, or other permits.>
+
+## Protocols
+
+<Links to protocols.io or other methods repositories.>

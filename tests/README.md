@@ -38,4 +38,9 @@ python3 tests/test_audit.py
 **languages**: one file per language (Julia, MATLAB, Mathematica, C++, Stan,
 Snakemake), seeded and unseeded, for the scan only.
 
+**review_notes**: a README that mixes review notes into reader-facing text
+(a `TODO(author)`, checklist IDs in headings, "author-confirmed", a link to
+`../REPRODUCIBILITY_RUNLOG.md`). The scan should flag both placeholders and review
+notes; an agent fixing it should move the notes to `AUTHOR_TODO.md`.
+
 **clean**: should give no findings.

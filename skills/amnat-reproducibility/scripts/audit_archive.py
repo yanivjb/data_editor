@@ -466,9 +466,30 @@ def check_readme(audit, files):
     if hits != sorted(hits):
         order = ", ".join(f"{n} (line {h})" for n, h in found if h)
         audit.add("DOC-2", "REQ", f"README sections may be out of the required order: {order}.", audit.rel(readme))
-    if "TODO" in text:
-        audit.add("DOC-2", "REQ", f"README still contains {text.count('TODO')} TODO placeholder(s).", audit.rel(readme))
+    check_reader_facing(audit, readme, lines)
     return readme, text
+
+
+PLACEHOLDER = re.compile(r"\bTODO\b|\bTBD\b|\bFIXME\b|\?\?\?|<!--|<(?!https?:)[A-Za-z][^<>\n]*\s[^<>\n]*>")
+CHECKLIST_ID = re.compile(r"\b(DOC|CODE|DATA|ARCH|PRIV|SENS|FIG|GUI)-\d+\b")
+REVIEW_NOTE = re.compile(
+    r"author[- ]confirm|confirmed by the author|the authors? confirms?|verified rerun|"
+    r"data editor|reproducibility (review|check|audit)|REPRODUCIBILITY_|AUTHOR_TODO|"
+    r"\]\(\.\./|\s\.\./[\w.]|\bchecklist\b|has not been changed|no data conversion",
+    re.I,
+)
+
+
+def check_reader_facing(audit, readme, lines):
+    """The README is for readers: flag placeholders and notes left over from a review."""
+    placeholders = [i for i, s in enumerate(lines, 1) if PLACEHOLDER.search(s)]
+    if placeholders:
+        audit.add("DOC-2", "REQ", f"README has placeholders, TODOs, or comments on {len(placeholders)} line(s) (first: line {placeholders[0]}); fill them in or move them to a to-do list outside the archive.", audit.rel(readme, placeholders[0]))
+    ids = [i for i, s in enumerate(lines, 1) if CHECKLIST_ID.search(s)]
+    notes = [i for i, s in enumerate(lines, 1) if REVIEW_NOTE.search(s)]
+    if ids or notes:
+        first = min(ids + notes)
+        audit.add("DOC-2", "REC", f"README reads like review notes ({len(ids)} line(s) with checklist IDs, {len(notes)} mentioning the review, confirmations, or files outside the archive; first: line {first}). Write it for readers; keep notes for authors elsewhere.", audit.rel(readme, first))
 
 
 def main():
