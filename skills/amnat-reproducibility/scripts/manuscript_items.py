@@ -140,6 +140,7 @@ def main():
         out += [f"- {f}" for f in others] + [""]
     report = "\n".join(out)
     if args.out:
+        args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(report, encoding="utf-8")
         print(f"Wrote {args.out}")
     else:

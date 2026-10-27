@@ -30,7 +30,8 @@ being written, when fixes are cheap.
    `codex`) and ask: "Check this project against the AmNat data and code
    checklist."
 5. Answer its questions about what it may read and whether any data are
-   sensitive, then work through `REPRODUCIBILITY_REPORT.md`.
+   sensitive. Read the one-page `REPRODUCIBILITY_REPORT.md` and work through
+   `AUTHOR_TODO.md`; details are in `reproducibility_review/`.
 
 ## What it does
 

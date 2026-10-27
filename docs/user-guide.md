@@ -176,45 +176,53 @@ about the review.
 
 ## 7. Read the report
 
-The agent writes these files in your project folder, outside `data_and_code/`:
+You get two files at the top of your project folder:
 
 | File | Contents |
 |------|----------|
-| `REPRODUCIBILITY_REPORT.md` | the review: verdict, required fixes, recommendations, questions for you, and the manuscript check |
-| `REPRODUCIBILITY_RUNLOG.md` | every command the agent ran, with how long it took and whether it worked |
-| `AUTHOR_TODO.md` | a checklist of what only you can supply or decide (package versions, citation, how a figure was made, ...) |
-| `REPRODUCIBILITY_AUDIT.md` | the automated scan |
-| `MANUSCRIPT_ITEMS.md` | the figures, tables, and numbers found in your manuscript |
+| `REPRODUCIBILITY_REPORT.md` | one page: the verdict, the results check, and what to fix |
+| `AUTHOR_TODO.md` | checkboxes for what only you can supply or decide (package versions, citation, how a figure was made, ...) |
 
-Work through the report in order:
+Everything else is in `reproducibility_review/`, which you only need if you want
+the details:
 
-1. **Required fixes**: what a data editor would ask you to change. Each cites a
-   checklist item, e.g. `CODE-2` (relative paths) or `DATA-5` (Excel sheets saved
-   as CSV); the full list is in
-   [`references/amnat-checklist.md`](../skills/amnat-reproducibility/references/amnat-checklist.md).
-2. **Recommended improvements**: good practice, not required.
-3. **Questions for you**: information only you have, listed with checkboxes in
-   `AUTHOR_TODO.md`. Once you have the answers, ask the agent to put them in the
-   README.
-4. **The manuscript check**, with a summary such as "38 of 41 computational items
-   reproduced; 2 not found in code; 1 mismatch".
+| File | Contents |
+|------|----------|
+| `full_report.md` | every finding with its checklist item and evidence, and the full table of manuscript results |
+| `runlog.md` | every command the agent ran, how long it took, and whether it worked |
+| `audit.md` | the automated scan |
+| `manuscript_items.md` | the figures, tables, and numbers found in your manuscript |
+| `work/` | the agent's scratch files; safe to delete when you are done |
+
+Nothing from the review is put in `data_and_code/` or `ms_files/`.
+
+A short report for one of the test projects in this repository looks like this:
+
+> **Verdict.** The code runs and reproduces Table 1 and Figure 2. One number in the
+> Results differs from the code and one has no code. The README needs a citation,
+> who collected the data, and software versions before you deposit.
+>
+> **Results check.** 6 of 8 results reproduced; 1 differs; 1 has no code.
+> - Results ¶1, survival under heat: 45.3% in the paper, 43.3% from the code.
+> - Results ¶1, "body mass did not differ (p = 0.43)": no code computes this test.
+>
+> **What to fix**
+> 1. Correct or explain the survival value above.
+> 2. Add the code for the body-mass test.
+> 3. Complete the README: citation, who collected the data, package versions.
+> 4. Save the survival difference to a file, not only to the console (recommended).
+>
+> **What we need from you:** see `AUTHOR_TODO.md` (3 items).
+>
+> Checked: all code and data; everything was rerun. Details:
+> `reproducibility_review/full_report.md`.
 
 A mismatch is often a typo in the manuscript rather than a problem in the code.
 The agent reports it either way and leaves it to you to decide which is right.
 
-Here is part of a report for one of the test projects in this repository:
-
-> **Verdict.** The code runs and reproduces Table 1 and Figure 2, but one number in
-> the Results does not match and one has no code. The README lacks a citation,
-> who collected the data, and software versions.
->
-> | Manuscript item | Value in paper | Produced by | Value from rerun | Status |
-> |-----------------|----------------|-------------|------------------|--------|
-> | Results ¶1, survival under heat | 45.3% | `code/01_analysis.py:21` | 43.3% | mismatch |
-> | Results ¶1, mass t-test | p = 0.43 | not found | — | not found in code |
-> | Table 1, all cells | | `code/01_analysis.py:21` | identical | match |
-> | Figure 1 | (design diagram) | — | — | not computational |
-> | Figure 2 | (plot) | `code/01_analysis.py:32` | same data; restyled | edited after code, data match |
+In the full report each finding cites a checklist item, e.g. `CODE-2` (relative
+paths) or `DATA-5` (Excel sheets saved as CSV); the full list is in
+[`references/amnat-checklist.md`](../skills/amnat-reproducibility/references/amnat-checklist.md).
 
 ## 8. Fix problems
 
@@ -287,6 +295,7 @@ rerun". Details for Bayesian models, simulations, SLiM, and pipelines are in
 | A finding is wrong | The scan uses pattern matching and makes mistakes. Tell the agent; it should check by reading the code. |
 | The PDF manuscript cannot be read | Install `pdftotext` (part of poppler), or put a `.docx`, `.md`, or `.txt` version in `ms_files/`. |
 | Your code changed while fixing and a number moved | Ask the agent to compare the before and after outputs; it keeps a log. Do not report numbers you have not regenerated. |
+| `reproducibility_review/work/` is large | It holds the agent's rerun copies and logs. Delete it once you have the reports, or ask the agent to. |
 
 ## 12. Privacy
 
@@ -304,14 +313,14 @@ rerun". Details for Bayesian models, simulations, SLiM, and pipelines are in
 Both helper scripts need only Python 3 and work on their own:
 
 ```sh
-# scan the archive; writes REPRODUCIBILITY_AUDIT.md in my_paper/
-python3 path/to/amnat-reproducibility/scripts/audit_archive.py my_paper --out REPRODUCIBILITY_AUDIT.md
+# scan the archive; writes my_paper/reproducibility_review/audit.md
+python3 path/to/amnat-reproducibility/scripts/audit_archive.py my_paper --out reproducibility_review/audit.md
 
 # the same, without showing any data values
 python3 path/to/amnat-reproducibility/scripts/audit_archive.py my_paper --no-values
 
 # list the figures, tables, and numbers in the manuscript
-python3 path/to/amnat-reproducibility/scripts/manuscript_items.py my_paper/ms_files --out MANUSCRIPT_ITEMS.md
+python3 path/to/amnat-reproducibility/scripts/manuscript_items.py my_paper/ms_files --out my_paper/reproducibility_review/manuscript_items.md
 ```
 
 The scan finds leads, not verdicts. It cannot run your code or check results

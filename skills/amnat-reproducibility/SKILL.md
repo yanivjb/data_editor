@@ -81,7 +81,7 @@ These protect the scientific record. Do not break them, even when asked casually
      were converted", "import behaviour has not been changed", "not a verified
      rerun");
    - audit detail such as line numbers of odd values, or links to files outside
-     the archive (`../REPRODUCIBILITY_RUNLOG.md`).
+     the archive (`../reproducibility_review/runlog.md`).
 
    Write confirmed facts plainly ("Leaf area is in cm²", "Blank cells are missing
    values"). Everything still to do goes in `AUTHOR_TODO.md` in the project folder,
@@ -110,6 +110,36 @@ and record the answers at the top of the report:
    (`SENS-2` to `SENS-5`).
 
 Running code locally is fine under every option; what matters is what you read.
+
+### Where review files go
+
+Keep the author's view small. Only two files go at the top of the project folder;
+everything else goes in one review folder:
+
+```text
+project_name/
+├── REPRODUCIBILITY_REPORT.md      one-page summary for the author (step 6)
+├── AUTHOR_TODO.md                 what only the author can supply or decide
+└── reproducibility_review/
+    ├── full_report.md             every checklist item and the full results table
+    ├── runlog.md                  every command run, with exit status and outputs
+    ├── audit.md                   output of audit_archive.py
+    ├── manuscript_items.md        output of manuscript_items.py
+    └── work/                      scratch: helper scripts, logs, rerun copies,
+                                   local package library; safe to delete
+```
+
+Nothing from the review goes in `data_and_code/` or `ms_files/`. In `work/`:
+
+- **Save small, targeted evidence** (a CSV of the compared values, a log), not
+  whole R workspaces or environment dumps; save a large object only when a later
+  step needs it, and say so in `runlog.md`.
+- **Reuse one rerun copy** of the archive rather than making a new copy for each
+  attempt, and name what you keep after the step it belongs to.
+- **Do not mention `work/` in the reports** except to point to evidence a finding
+  depends on.
+
+At the end, tell the author how much space `work/` uses and offer to delete it.
 
 ### 1. Find the archive and the manuscript
 
@@ -140,7 +170,7 @@ The manuscript is used only for checking. It is not part of the archive.
 Run the bundled audit script for a quick mechanical scan of the archive:
 
 ```sh
-python3 <skill-dir>/scripts/audit_archive.py <project_name> --out REPRODUCIBILITY_AUDIT.md
+python3 <skill-dir>/scripts/audit_archive.py <project_name> --out reproducibility_review/audit.md
 ```
 
 `<skill-dir>` is the directory containing this `SKILL.md`. Given the project folder,
@@ -200,8 +230,7 @@ you cannot run a language, say so, check the code by reading, and mark its items
 **not rerun**; offer the author the exact commands to run themselves and share the
 output.
 
-Log every command you run in `REPRODUCIBILITY_RUNLOG.md` in the project folder
-(outside the archive): the command, working directory, start time, run time, exit
+Log every command you run in `reproducibility_review/runlog.md`: the command, working directory, start time, run time, exit
 status, warnings or errors, and the output files written. This log is the evidence
 for every "runs" and "match" in the report. If the runtime is not installed, say
 so plainly; do not claim the code runs.
@@ -232,7 +261,7 @@ supplement, and the figure and table files.
 and sentences with numbers:
 
 ```sh
-python3 <skill-dir>/scripts/manuscript_items.py <project_name>/ms_files --out MANUSCRIPT_ITEMS.md
+python3 <skill-dir>/scripts/manuscript_items.py <project_name>/ms_files --out <project_name>/reproducibility_review/manuscript_items.md
 ```
 
 The script reads `.docx`, `.tex`, `.md`, `.qmd`, `.Rmd`, and `.txt` with the
@@ -299,22 +328,32 @@ when the author can add the manuscript to `ms_files/`.
 
 ### 6. Report
 
-Write `REPRODUCIBILITY_REPORT.md` in the project folder, outside the archive (or
-show it in chat if the author prefers), with:
+Write two reports: a short one the author reads, and a full one that holds the
+evidence.
 
-1. A one-paragraph verdict: would a data editor likely accept this archive as is,
-   and does it reproduce the paper's results? State what the author allowed you to
-   read (`PRIV-1`) and whether any data are restricted (`SENS-1`).
-2. **Required fixes**: failing or partial REQ items, each with ID, evidence, and the
-   concrete change needed.
-3. **Recommended improvements**: REC items, briefly.
-4. **Questions for the author**: a short summary pointing to `AUTHOR_TODO.md`,
-   which holds the full list.
-5. **Clean-run results** from step 4, pointing to `REPRODUCIBILITY_RUNLOG.md`, and
-   the **manuscript traceability table**, with its coverage summary, from step 5.
-6. A table of all checklist IDs with status.
+**`REPRODUCIBILITY_REPORT.md`** (top of the project folder) fits on one page,
+in plain language, with no checklist IDs:
 
-Keep it short and specific. The author should be able to work through it in order.
+1. **Verdict**, two or three sentences: does the code run, does it reproduce the
+   paper, and is the archive ready to deposit?
+2. **Results check**, one line: e.g. "38 of 41 results reproduced; 2 have no code;
+   1 differs (Results ¶2: 45.3% in the paper, 43.3% from the code)." List every
+   mismatch and every result with no code; these matter most.
+3. **What to fix**, at most about ten one-line items, most important first, required
+   before recommended. Group similar findings ("12 column names contain spaces").
+4. **What we need from you**: "See `AUTHOR_TODO.md` (5 items)."
+5. One line on what was and was not checked (what you were allowed to read, which
+   steps were not rerun and why), and a pointer to
+   `reproducibility_review/full_report.md` for the details.
+
+**`reproducibility_review/full_report.md`** holds everything else: the privacy and
+sensitive-data answers (`PRIV-1`, `SENS-1`); every finding with its checklist ID,
+evidence (`path:line`), and the change needed; recommended improvements; the
+clean-run results, pointing to `runlog.md`; the full manuscript traceability table
+with its coverage summary; and a table of all checklist IDs with status.
+
+Show the author the short report, in chat or by opening the file. Do not paste the
+full report into the chat.
 
 ### 7. Fix (only with approval)
 
@@ -390,6 +429,8 @@ Before the author deposits:
 - It goes to Dryad or Zenodo, not only GitHub (`ARCH-1`); all repository metadata
   fields are filled (`ARCH-2`); and the author gets a private reviewer link for
   submission (`ARCH-3`).
+- Tell the author how much space `reproducibility_review/work/` uses and offer to
+  delete it; the reports and run log are enough to show what was checked.
 - Remind the author to confirm the current policy in The American Naturalist's
   Instructions for Authors.
 

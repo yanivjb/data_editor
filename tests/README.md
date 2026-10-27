@@ -40,7 +40,8 @@ Snakemake), seeded and unseeded, for the scan only.
 
 **review_notes**: a README that mixes review notes into reader-facing text
 (a `TODO(author)`, checklist IDs in headings, "author-confirmed", a link to
-`../REPRODUCIBILITY_RUNLOG.md`). The scan should flag both placeholders and review
+`../reproducibility_review/runlog.md`). The scan should flag both placeholders and review
 notes; an agent fixing it should move the notes to `AUTHOR_TODO.md`.
 
-**clean**: should give no findings.
+**clean**: should give no findings, including from the review's own scratch
+folder (`reproducibility_review/work/`), which the scan must skip.

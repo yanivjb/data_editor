@@ -16,7 +16,7 @@ Data collected by J. Doe; code written by J. Doe.
 
 R version 4.3.1.
 TODO(author): provide sessionInfo() output.
-Local verification used a different R version; see ../REPRODUCIBILITY_RUNLOG.md.
+Local verification used a different R version; see ../reproducibility_review/runlog.md.
 
 ## Missing values (DATA-12)
 

@@ -28,7 +28,7 @@ from pathlib import Path
 SKIP_DIRS = {
     ".git", ".hg", ".svn", "renv", "packrat", "node_modules", ".venv", "venv",
     "env", "__pycache__", ".ipynb_checkpoints", ".Rproj.user", ".quarto",
-    ".claude", ".agents", ".codex", "ms_files",
+    ".claude", ".agents", ".codex", "ms_files", "reproducibility_review",
 }
 ARCHIVE_DIR = "data_and_code"
 # Line-comment markers by extension; block comments are recognised by their opening token.
@@ -474,7 +474,7 @@ PLACEHOLDER = re.compile(r"\bTODO\b|\bTBD\b|\bFIXME\b|\?\?\?|<!--|<(?!https?:)[A
 CHECKLIST_ID = re.compile(r"\b(DOC|CODE|DATA|ARCH|PRIV|SENS|FIG|GUI)-\d+\b")
 REVIEW_NOTE = re.compile(
     r"author[- ]confirm|confirmed by the author|the authors? confirms?|verified rerun|"
-    r"data editor|reproducibility (review|check|audit)|REPRODUCIBILITY_|AUTHOR_TODO|"
+    r"data editor|reproducibility (review|check|audit)|REPRODUCIBILITY_|reproducibility_review|AUTHOR_TODO|"
     r"\]\(\.\./|\s\.\./[\w.]|\bchecklist\b|has not been changed|no data conversion",
     re.I,
 )
@@ -566,6 +566,7 @@ def main():
     report = render(audit, readme)
     if args.out:
         out = args.out if args.out.is_absolute() else project / args.out
+        out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(report, encoding="utf-8")
         print(f"Wrote {out} ({len(audit.findings)} findings)")
     else:
