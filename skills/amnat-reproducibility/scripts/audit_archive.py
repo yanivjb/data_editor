@@ -21,6 +21,7 @@ import json
 import re
 import sys
 import zipfile
+import xml.etree.ElementTree as ET
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -30,8 +31,23 @@ SKIP_DIRS = {
     ".claude", ".agents", ".codex", "ms_files",
 }
 ARCHIVE_DIR = "data_and_code"
-CODE_EXT = {".r", ".rmd", ".qmd", ".py", ".ipynb", ".m", ".jl", ".sh", ".do", ".sas", ".slim", ".eidos"}
+# Line-comment markers by extension; block comments are recognised by their opening token.
+COMMENTS = {
+    ".r": ("#",), ".rmd": ("#",), ".qmd": ("#",), ".py": ("#",), ".ipynb": ("#",),
+    ".jl": ("#",), ".sh": ("#",), ".bash": ("#",), ".pl": ("#",), ".smk": ("#",),
+    ".m": ("%",), ".wl": ("(*",), ".wls": ("(*",), ".nb": ("(*",),
+    ".c": ("//", "/*", "*"), ".cc": ("//", "/*", "*"), ".cpp": ("//", "/*", "*"),
+    ".cxx": ("//", "/*", "*"), ".h": ("//", "/*", "*"), ".hpp": ("//", "/*", "*"),
+    ".java": ("//", "/*", "*"), ".rs": ("//", "/*", "*"), ".go": ("//", "/*", "*"),
+    ".f": ("!", "c ", "C "), ".f90": ("!",), ".f95": ("!",),
+    ".slim": ("//", "/*", "*"), ".eidos": ("//", "/*", "*"), ".nf": ("//", "/*", "*"),
+    ".stan": ("//", "/*", "*", "#"), ".jags": ("#",), ".bug": ("#",),
+    ".do": ("//", "*", "/*"), ".sas": ("*", "/*"),
+}
+CODE_EXT = set(COMMENTS)
+CODE_NAMES = {"snakefile", "makefile", "cmakelists.txt", "nextflow.config", "dockerfile"}
 SLIM_EXT = {".slim", ".eidos"}
+MODEL_EXT = {".stan", ".jags", ".bug", ".h", ".hpp"}  # model and header files: seeds and labels live in callers
 GUI_EXT = {
     ".jmp", ".jrp", ".jrn", ".spv", ".pzfx", ".pzf", ".mtw", ".mpj", ".mpx", ".stw",
     ".sta", ".geneious", ".mxd", ".aprx", ".qgs", ".qgz",
@@ -57,16 +73,18 @@ MAX_ROWS = 200_000
 
 PKG_LOAD = re.compile(
     r"^\s*(library|require|requireNamespace|suppressPackageStartupMessages|"
-    r"pacman::p_load|p_load)\s*\(|^\s*(import|from)\s+\w"
+    r"pacman::p_load|p_load)\s*\(|^\s*(import|from|using)\s+\w|^\s*(Needs|Get)\["
 )
-DATA_READ = re.compile(
+READ_CALL = (
     r"\b(read\.csv2?|read\.table|read\.delim|read_csv2?|read_tsv|read_delim|"
     r"read_excel|read_xlsx|read_xls|read\.xlsx|fread|readRDS|read_rds|load|"
     r"pd\.read_\w+|np\.loadtxt|np\.genfromtxt|np\.load|xlsread|readtable|"
-    r"readmatrix|csvread)\s*\("
+    r"readmatrix|csvread|readdlm|CSV\.read|CSV\.File|fopen|ifstream|read_csv_file)\s*\("
 )
+DATA_READ = re.compile(READ_CALL + r"|\bImport\[|std::ifstream\s+\w+\s*[({]")
 READ_PATH = re.compile(
-    DATA_READ.pattern + r"\s*(?:file\s*=\s*|path\s*=\s*)?[\"']([^\"']+)[\"']"
+    READ_CALL + r"\s*(?:file\s*=\s*|path\s*=\s*)?[\"']([^\"']+)[\"']"
+    r"|\bImport\[\s*\"([^\"]+)\"|std::ifstream\s+\w+\s*[({]\s*\"([^\"]+)\""
 )
 HERE_PATH = re.compile(r"\bhere(?:::here)?\s*\(\s*((?:[\"'][^\"']+[\"']\s*,?\s*)+)\)")
 EXCEL_READ = re.compile(r"\b(read_excel|read_xlsx|read_xls|read\.xlsx|xlsread|pd\.read_excel)\s*\(")
@@ -79,14 +97,24 @@ STOCHASTIC = re.compile(
     r"rmultinom|rnbinom|rlnorm|boot|bootMer|brm|stan|sampling|cmdstan\w*|MCMCglmm|"
     r"jags\w*|run\.jags|simulate|replicate|kmeans|randomForest|ranger|"
     r"train_test_split|shuffle|permutation)\s*\(|np\.random\.|\brandom\.\w+\(|"
-    r"default_rng\s*\(|\.sample\s*\(|\brand[ni]?\s*\(|^\s*slim\s|[\s;|&\"']slim\s"
+    r"default_rng\s*\(|\.sample\s*\(|\brand[ni]?\s*\(|^\s*slim\s|[\s;|&\"']slim\s|"
+    r"\brandn\s*\(|\brandperm\s*\(|\bRandom(Real|Integer|Choice|Sample|Variate)\[|"
+    r"\bmt19937|_distribution\s*<|\brandom_device\b|\bsrand\s*\(|\brand\s*\(\s*\)"
 )
 SEED = re.compile(
     r"\bset\.seed\s*\(|\bseed\s*=|np\.random\.seed\s*\(|random\.seed\s*\(|"
     r"default_rng\s*\(\s*\d|RandomState\s*\(\s*\d|torch\.manual_seed|\brng\s*\(\s*\d|"
-    r"RNGkind\s*\(|\bsetSeed\s*\(|\bslim\b.*\s-s(?:eed)?\s"
+    r"RNGkind\s*\(|\bsetSeed\s*\(|\bslim\b.*\s-s(?:eed)?\s|"
+    r"Random\.seed!\s*\(|\b(MersenneTwister|Xoshiro|StableRNG)\s*\(\s*\w|\brng\s*\(\s*['\"\w]|"
+    r"\bSeedRandom\[|\bmt19937(_64)?\s+\w+\s*[({]\s*\w|\.seed\s*\(\s*\w|\bsrand\s*\(\s*\d"
 )
 FIG_TAB = re.compile(r"\b(fig(ure)?|tab(le)?|appendix|supp\w*)\.?\s*[A-Z]?\d", re.IGNORECASE)
+SENSITIVE_NAME = re.compile(
+    r"^(lat|lon|long|lng|latitude|longitude|gps|coords?|coordinates?|utm\w*|easting|"
+    r"northing|x_?coord|y_?coord|name|first_?name|last_?name|surname|e-?mail|phone|"
+    r"address|street|postcode|zip|dob|birth\w*|owner|landowner|participant\w*)$",
+    re.I,
+)
 COLUMN_NAME_OK = re.compile(r"^[A-Za-z][A-Za-z0-9_.]*$")
 NUMBER = re.compile(r"^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$")
 
@@ -94,7 +122,7 @@ README_SECTIONS = [
     ("citation", re.compile(r"citation|cite|doi\b|reference", re.I)),
     ("authors and contact", re.compile(r"author|contact|e-?mail|orcid", re.I)),
     ("study summary", re.compile(r"summary|abstract|overview|about th|description of the study", re.I)),
-    ("who collected data / wrote code", re.compile(r"collected|responsib|wrote|written by|data collection", re.I)),
+    ("who collected data / wrote code", re.compile(r"collected by|data collect|responsib|wrote the|code (?:was )?written by|contributions?\b", re.I)),
     ("files and variables", re.compile(r"\bfiles?\b|folder|variable|column|codebook", re.I)),
     ("software versions", re.compile(r"version|sessioninfo|session info|dependenc|package", re.I)),
 ]
@@ -142,7 +170,7 @@ def code_lines(path):
                 if cell.get("cell_type") == "code":
                     lines.append((n, s, s.lstrip().startswith("#")))
         return lines
-    comment = {".m": "%", ".slim": "//", ".eidos": "//"}.get(path.suffix.lower(), "#")
+    comment = comment_markers(path, text)
     in_chunk = path.suffix.lower() not in {".rmd", ".qmd"}
     out = []
     for n, s in enumerate(text.splitlines(), 1):
@@ -159,14 +187,26 @@ def code_lines(path):
     return out
 
 
-def strip_comment(s, slim=False):
-    return re.sub(r"(^|\s)//.*$" if slim else r"(^|\s)#.*$", "", s)
+def comment_markers(path, text):
+    ext = path.suffix.lower()
+    if ext == ".m" and re.search(r"BeginPackage\[|^\s*\(\*|\w\[[^\]]*\]\s*:=", text, re.M):
+        return ("(*",)  # Mathematica package, not MATLAB
+    return COMMENTS.get(ext, ("#",))
+
+
+def strip_comment(s, markers):
+    for m in markers:
+        if m in ("#", "%", "//", "!"):
+            s = re.sub(r"(^|\s)" + re.escape(m) + r".*$", "", s)
+    return s
 
 
 def check_code(audit, path, all_files):
     lines = code_lines(path)
     if not lines:
         return
+    markers = comment_markers(path, path.read_text(encoding="utf-8", errors="replace"))
+    is_model = path.suffix.lower() in MODEL_EXT
     first_read, late_loads = None, []
     stochastic, seeded = None, False
     n_comments = n_code = n_labels = 0
@@ -176,7 +216,7 @@ def check_code(audit, path, all_files):
             if FIG_TAB.search(s):
                 n_labels += 1
             continue
-        code = strip_comment(s, slim=path.suffix.lower() in SLIM_EXT)
+        code = strip_comment(s, markers)
         if not code.strip():
             continue
         n_code += 1
@@ -196,12 +236,17 @@ def check_code(audit, path, all_files):
             late_loads.append(n)
         if STOCHASTIC.search(code) and stochastic is None:
             stochastic = n
+        if re.search(r"\brandom_device\b|\btime\s*\(\s*(NULL|0|nullptr)?\s*\)|\bnow\(\)", code) and STOCHASTIC.search(code):
+            audit.add("CODE-13", "REC", "Random generator seeded from the clock or hardware (`random_device`, `time()`); results change every run. Use a fixed, recorded seed.", audit.rel(path, n))
+            seeded = True  # already reported; skip the generic no-seed finding
+            continue
         if SEED.search(code):
             seeded = True
             if re.search(r"\bslim\b.*\s-s(?:eed)?\s", code):
                 audit.slim_seeded_by_driver = True
         for m in READ_PATH.finditer(code):
-            check_read_target(audit, path, n, m.group(m.lastindex), all_files)
+            target = next(g for g in reversed(m.groups()) if g)
+            check_read_target(audit, path, n, target, all_files)
         for m in HERE_PATH.finditer(code):
             parts = re.findall(r"[\"']([^\"']+)[\"']", m.group(1))
             target = "/".join(parts)
@@ -212,11 +257,11 @@ def check_code(audit, path, all_files):
     if path.suffix.lower() in SLIM_EXT:
         if not seeded:
             audit.slim_unseeded.append(path)  # may be seeded by a driver; decided in main()
-    elif stochastic and not seeded:
+    elif stochastic and not seeded and not is_model:
         audit.add("CODE-13", "REC", "Stochastic function used but no random seed found.", audit.rel(path, stochastic))
     if n_code > 20 and n_comments / max(n_code, 1) < 0.05:
         audit.add("CODE-3", "REQ", f"Few comments ({n_comments} comment lines for {n_code} code lines); explain the purpose of each block.", audit.rel(path))
-    if n_code > 20 and n_labels == 0:
+    if n_code > 20 and n_labels == 0 and not is_model:
         audit.add("CODE-4", "REQ", "No comments or headers mention figure or table numbers.", audit.rel(path))
 
 
@@ -255,50 +300,59 @@ def check_table(audit, path, documented_text):
         except StopIteration:
             audit.add("DATA-1", "REQ", "Empty data file.", audit.rel(path))
             return
-        kinds = [Counter() for _ in header]
-        examples = [defaultdict(list) for _ in header]
-        missing = Counter()
-        n_rows = ragged = 0
-        for row in reader:
-            n_rows += 1
-            if n_rows > MAX_ROWS:
-                break
-            if len(row) != len(header):
-                ragged += 1
-            for i, value in enumerate(row[: len(header)]):
-                v = value.strip()
-                if v in MISSING_TOKENS:
-                    missing[v if v else "(blank)"] += 1
-                    continue
-                kind = "number" if NUMBER.match(v.replace(",", "")) else "text"
-                kinds[i][kind] += 1
-                if len(examples[i][kind]) < 3:
-                    examples[i][kind].append(v)
+        n_rows = check_columns(audit, audit.rel(path), header, reader, documented_text)
     audit.inventory["data_tables"].append(f"{audit.rel(path)} ({n_rows:,} rows x {len(header)} columns)")
+
+
+def check_columns(audit, where, header, rows, documented_text):
+    """Check column names and contents; return the number of rows read."""
+    kinds = [Counter() for _ in header]
+    examples = [defaultdict(list) for _ in header]
+    missing = Counter()
+    n_rows = ragged = 0
+    for row in rows:
+        n_rows += 1
+        if n_rows > MAX_ROWS:
+            break
+        if len(row) != len(header):
+            ragged += 1
+        for i, value in enumerate(row[: len(header)]):
+            v = value.strip()
+            if v in MISSING_TOKENS:
+                missing[v if v else "(blank)"] += 1
+                continue
+            kind = "number" if NUMBER.match(v.replace(",", "")) else "text"
+            kinds[i][kind] += 1
+            if len(examples[i][kind]) < 3:
+                examples[i][kind].append(v)
+    sensitive = [h for h in header if SENSITIVE_NAME.match(re.sub(r"[\s(].*$", "", h.strip()))]
+    if sensitive:
+        audit.add("SENS-1", "REC", f"Columns that may hold locations or personal data: {fmt_list(sensitive)}. Ask the author whether they can be shared as is.", where)
     bad = [h for h in header if not COLUMN_NAME_OK.match(h.strip())]
     long_names = [h for h in header if COLUMN_NAME_OK.match(h.strip()) and len(h.strip()) > 10]
     dupes = [h for h, c in Counter(header).items() if c > 1]
     if bad:
-        audit.add("DATA-8", "REQ", f"Column names with spaces, special characters, or blanks: {fmt_list(bad)}", audit.rel(path))
+        audit.add("DATA-8", "REQ", f"Column names with spaces, special characters, or blanks: {fmt_list(bad)}", where)
     if long_names:
-        audit.add("DATA-8", "REQ", f"Column names longer than 10 characters (journal preference): {fmt_list(long_names)}", audit.rel(path))
+        audit.add("DATA-8", "REQ", f"Column names longer than 10 characters (journal preference): {fmt_list(long_names)}", where)
     if dupes:
-        audit.add("DATA-8", "REQ", f"Duplicate column names: {fmt_list(dupes)}", audit.rel(path))
+        audit.add("DATA-8", "REQ", f"Duplicate column names: {fmt_list(dupes)}", where)
     if ragged:
-        audit.add("DATA-10", "REC", f"{ragged} rows have a different number of fields from the header.", audit.rel(path))
+        audit.add("DATA-10", "REC", f"{ragged} rows have a different number of fields from the header.", where)
     for i, h in enumerate(header):
         k = kinds[i]
         if k["number"] and k["text"] and min(k["number"], k["text"]) / (k["number"] + k["text"]) > 0.001:
             eg = "" if audit.no_values else f", e.g. {fmt_list(examples[i]['text'])}"
-            audit.add("DATA-11", "REC", f"Column `{h}` mixes numbers ({k['number']}) and text ({k['text']}){eg}", audit.rel(path))
+            audit.add("DATA-11", "REC", f"Column `{h}` mixes numbers ({k['number']}) and text ({k['text']}){eg}", where)
     codes = [c for c in missing if c != "NA"]
     if codes:
         detail = ", ".join(f"`{c}` x{missing[c]}" for c in codes)
-        audit.add("DATA-12", "REC", f"Missing values coded other than `NA`: {detail}. State the code(s) in the README.", audit.rel(path))
+        audit.add("DATA-12", "REC", f"Missing values coded other than `NA`: {detail}. State the code(s) in the README.", where)
     if documented_text:
         undocumented = [h for h in header if h.strip() and not re.search(r"(?<![A-Za-z0-9_])" + re.escape(h.strip()) + r"(?![A-Za-z0-9_])", documented_text)]
         if undocumented:
-            audit.add("DATA-3", "REQ", f"{len(undocumented)} of {len(header)} columns not mentioned in README or codebook: {fmt_list(undocumented)}", audit.rel(path))
+            audit.add("DATA-3", "REQ", f"{len(undocumented)} of {len(header)} columns not mentioned in README or codebook: {fmt_list(undocumented)}", where)
+    return n_rows
 
 
 def excel_sheets(path):
@@ -312,7 +366,59 @@ def excel_sheets(path):
     return re.findall(r"<(?:\w+:)?sheet\b[^>]*\bname=\"([^\"]+)\"", xml)
 
 
-def check_excel(audit, path, csv_stems):
+def xlsx_tables(path):
+    """Yield (sheet name, rows as lists of strings) from an .xlsx file, or nothing if unreadable."""
+    ns = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+          "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships"}
+    try:
+        z = zipfile.ZipFile(path)
+        shared = []
+        if "xl/sharedStrings.xml" in z.namelist():
+            for si in ET.fromstring(z.read("xl/sharedStrings.xml")).findall("m:si", ns):
+                shared.append("".join(t.text or "" for t in si.iter(f"{{{ns['m']}}}t")))
+        rels = ET.fromstring(z.read("xl/_rels/workbook.xml.rels"))
+        targets = {r.get("Id"): r.get("Target") for r in rels}
+        sheets = ET.fromstring(z.read("xl/workbook.xml")).find("m:sheets", ns)
+    except (zipfile.BadZipFile, KeyError, ET.ParseError, OSError):
+        return
+    for sheet in sheets:
+        target = targets.get(sheet.get(f"{{{ns['r']}}}id"), "")
+        target = target.lstrip("/") if target.startswith("/") else "xl/" + target
+        try:
+            data = ET.fromstring(z.read(target))
+        except (KeyError, ET.ParseError):
+            continue
+        rows = []
+        for row in data.iter(f"{{{ns['m']}}}row"):
+            cells = {}
+            for c in row.findall("m:c", ns):
+                col = re.match(r"[A-Z]+", c.get("r", "A")).group()
+                idx = 0
+                for ch in col:
+                    idx = idx * 26 + ord(ch) - 64
+                v = c.find("m:v", ns)
+                if c.get("t") == "s" and v is not None:
+                    text = shared[int(v.text)]
+                elif c.get("t") == "inlineStr":
+                    text = "".join(t.text or "" for t in c.iter(f"{{{ns['m']}}}t"))
+                else:
+                    text = v.text if v is not None and v.text else ""
+                cells[idx - 1] = text
+            if cells:
+                rows.append([cells.get(i, "") for i in range(max(cells) + 1)])
+            if len(rows) > MAX_ROWS:
+                break
+        if rows:
+            yield sheet.get("name"), rows
+
+
+def check_excel(audit, path, csv_stems, documented_text):
+    for sheet, rows in xlsx_tables(path) if path.suffix.lower() in {".xlsx", ".xlsm"} else []:
+        if re.search(r"read.?me|notes?|metadata|info|description|codebook|dictionary", sheet, re.I):
+            continue  # documentation sheet, not data
+        width = len(rows[0])
+        body = [r + [""] * (width - len(r)) for r in rows[1:]]  # Excel omits trailing blank cells
+        check_columns(audit, f"{audit.rel(path)} [{sheet}]", rows[0], body, documented_text)
     sheets = excel_sheets(path)
     label = f"{audit.rel(path)}" + (f" (sheets: {', '.join(sheets)})" if sheets else "")
     audit.inventory["excel"].append(label)
@@ -404,7 +510,7 @@ def main():
     csv_stems = [norm(f.stem) for f in files if f.suffix.lower() in TABLE_EXT]
     for f in files:
         ext = f.suffix.lower()
-        if ext in CODE_EXT:
+        if ext in CODE_EXT or f.name.lower() in CODE_NAMES:
             audit.inventory["code"].append(audit.rel(f))
             check_code(audit, f, file_set)
         elif ext in TABLE_EXT:
@@ -413,7 +519,7 @@ def main():
             if " " in f.name:
                 audit.add("DATA-2", "REQ", "File name contains spaces; use a short name without spaces.", audit.rel(f))
         elif ext in EXCEL_EXT:
-            check_excel(audit, f, csv_stems)
+            check_excel(audit, f, csv_stems, documented)
             if " " in f.name:
                 audit.add("DATA-2", "REQ", "File name contains spaces; use a short name without spaces.", audit.rel(f))
         elif ext in GUI_EXT:

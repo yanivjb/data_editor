@@ -16,5 +16,6 @@ tool-specific features in the skill body.
   Keep them in sync when editing.
 - `scripts/audit_archive.py` must use only the Python standard library, so authors
   can run it without installing anything.
-- After changing the script, run it on a small test project containing the
-  problems it should catch, and on a clean one, and check the report.
+- After changing a script, run `python3 tests/test_audit.py`, and add a test
+  project or expectation for any new check. Test projects must be made up: never
+  copy an author's real data or manuscript into `tests/`.

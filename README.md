@@ -122,6 +122,22 @@ skills/amnat-reproducibility/
     └── AGENTS_snippet.md          rules to add to a project's AGENTS.md/CLAUDE.md
 ```
 
+## Languages
+
+The agent can read and check code in any language. The scan recognises R, R
+Markdown, Quarto, Python, Jupyter, Julia, MATLAB, Mathematica, C/C++, Fortran,
+Rust, Go, Java, Stan, JAGS, SLiM, Stata, SAS, shell scripts, Snakemake, and
+Nextflow, and checks seeds, paths, and data reads for the common ones. The agent
+can only rerun code whose runtime is installed; MATLAB and Mathematica also need
+licences. Otherwise it checks by reading, marks results **not rerun**, and gives
+you the commands to run yourself.
+
+## Testing
+
+`tests/` holds small made-up projects with planted problems. Run
+`python3 tests/test_audit.py` to check the scan; `tests/README.md` has answer keys
+for trying the whole skill in Claude Code or Codex.
+
 ## Source and caveats
 
 The checklist is from Bolnick, Schürch, Vedder, Reuter, Perez & Montgomerie

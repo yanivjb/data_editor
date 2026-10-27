@@ -163,11 +163,22 @@ file list with variables and units → software and package versions.
 If the language runtime is available, run the analysis from the archive root in a
 fresh process, in the documented order:
 
-- R: `Rscript --vanilla script.R`, or `quarto render file.qmd` for Quarto. Note
-  that `--vanilla` ignores `.Rprofile`, so an `renv` project needs
-  `Rscript -e 'renv::restore()'` first.
-- Python: a fresh virtual environment with the listed requirements, then
-  `python script.py`.
+| Language | Fresh run | Versions to record |
+|----------|-----------|--------------------|
+| R | `Rscript --vanilla script.R`; `quarto render file.qmd`. `--vanilla` ignores `.Rprofile`, so run `Rscript -e 'renv::restore()'` first in an `renv` project | `sessionInfo()` |
+| Python | new virtual environment with the listed requirements, then `python script.py`; notebooks with `jupyter nbconvert --to notebook --execute` | `python --version`, `pip list --format freeze` |
+| Julia | `julia --project=. -e 'using Pkg; Pkg.instantiate()'`, then `julia --project=. script.jl` | `Project.toml` and `Manifest.toml`, `versioninfo()` |
+| MATLAB | `matlab -batch "run('script.m')"` | `ver` (MATLAB and toolbox versions) |
+| Mathematica | `wolframscript -file script.wls`; notebooks need evaluating in the front end, so ask the author to export a `.wl`/`.wls` script or run it themselves | `$Version` |
+| C / C++ / Fortran | build from scratch with the documented command (`make`, `cmake`), then run | compiler and version, flags, library versions |
+| SLiM | `slim -s SEED -d param=value model.slim` | `slim -v` |
+| Stan / JAGS models | run through the calling R/Python/Julia script | CmdStan or JAGS version |
+| Workflows | `snakemake -n` (dry run) then the documented target; `nextflow run ... -profile test` | workflow manager version, tool versions |
+
+MATLAB and Mathematica need licences, and many runtimes may not be installed. If
+you cannot run a language, say so, check the code by reading, and mark its items
+**not rerun**; offer the author the exact commands to run themselves and share the
+output.
 
 Log every command you run in `REPRODUCIBILITY_RUNLOG.md` in the project folder
 (outside the archive): the command, working directory, start time, run time, exit

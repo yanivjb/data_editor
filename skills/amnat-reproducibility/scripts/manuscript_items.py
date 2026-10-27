@@ -60,6 +60,11 @@ def text_paragraphs(path):
     text = path.read_text(encoding="utf-8", errors="replace")
     if path.suffix.lower() == ".tex":
         text = re.sub(r"(?<!\\)%.*", "", text)
+        # Start a new paragraph at sections, floats, and captions, and drop the markup.
+        text = re.sub(r"\\(sub)*section\*?\{([^}]*)\}", r"\n\n\2\n\n", text)
+        text = re.sub(r"\\(begin|end)\{(figure|table)\*?\}(\[[^\]]*\])?", "\n\n", text)
+        text = re.sub(r"\\caption\{", "\n\n", text)
+        text = re.sub(r"\\(begin|end)\{document\}|\\documentclass(\[[^\]]*\])?\{[^}]*\}", "\n\n", text)
     return [re.sub(r"\s+", " ", block).strip() for block in re.split(r"\n\s*\n", text)]
 
 
