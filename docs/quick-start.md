@@ -46,9 +46,9 @@ decide for you.
 
 > I don't know this one yet. Leave it on the list and move on.
 
-If you find an error in your data (e.g. two plants with the same ID):
+If you find an error in your data (e.g. two beetles with the same ID):
 
-> Plant 131 in the harvest sheet is a different individual. Correct it in the code,
+> Beetle B017 in the mass sheet is a different individual. Correct it in the code,
 > not the raw file, and tell me what it changes.
 
 ## 4. Fix the archive
@@ -68,17 +68,40 @@ Only for the corrections you have decided on:
 > revised_manuscript/ for the corrections we agreed. Add a Word comment to each
 > changed number saying where the new value comes from.
 
-> For the biomass result that is no longer significant, suggest wording in a
-> comment, but don't change my interpretation.
+> For the result that is no longer significant, suggest wording in a comment, but
+> don't change my interpretation.
 
 Review the tracked changes in Word, and accept them yourself.
 
-## 6. Final check
+## 6. Wrap up
+
+When you have made your decisions:
+
+> We're done. Rerun everything from scratch with the final code and data,
+> regenerate every figure and table, and check they still match the manuscript.
+
+This matters most if anything changed during the review (a data correction, a
+code fix, a new R version): figures made before the change will be out of date.
+
+> Put the tracked copies back in ms_files/, replacing the old versions. Don't accept
+> any tracked changes; I'll do that. Tell me first how I can get the old versions
+> back.
+
+> Write WHAT_CHANGED.md: a summary of every change I can send to my co-authors.
+
+> Update AUTHOR_TODO.md so it lists only what is left for me.
+
+> Clean up: delete the scratch files, keep the full report and run log, and list
+> what you deleted.
+
+When it is done, your project folder should hold your own folders plus
+`AUTHOR_TODO.md`, `WHAT_CHANGED.md`, `REPRODUCIBILITY_REPORT.md`, and a small
+`reproducibility_review/` folder with the evidence of what was checked.
+
+## 7. Before you deposit
 
 > Do a final check before I deposit: is AUTHOR_TODO.md done, is the README clean
 > for readers, and is data_and_code/ free of clutter?
-
-> How big is reproducibility_review/work/? Delete it.
 
 Then deposit `data_and_code/` on Dryad or Zenodo yourself, and put the private
 reviewer link in your submission.

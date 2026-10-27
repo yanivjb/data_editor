@@ -132,6 +132,7 @@ project_name/
 ├── REPRODUCIBILITY_REPORT.md      one-page summary for the author (step 6)
 ├── AUTHOR_TODO.md                 what only the author can supply or decide
 ├── revised_manuscript/            only if the author asks for manuscript edits (step 7)
+├── WHAT_CHANGED.md                written when finishing (step 9)
 └── reproducibility_review/
     ├── full_report.md             every checklist item and the full results table
     ├── runlog.md                  every command run, with exit status and outputs
@@ -347,7 +348,7 @@ assume the code is right and the paper wrong. Likely causes:
   model-adjusted means).
 
 Record the likely cause and your evidence for it. For a large discrepancy
-(e.g. χ² 21.2 in the paper, 15.8 from the code), say plainly that the cause is
+(e.g. a test statistic of 21 in the paper and 16 from the code), say plainly that the cause is
 unknown if you cannot establish it. Flag any mismatch that changes a conclusion,
 e.g. a result that was significant and no longer is.
 
@@ -505,10 +506,44 @@ Before the author deposits:
 - It goes to Dryad or Zenodo, not only GitHub (`ARCH-1`); all repository metadata
   fields are filled (`ARCH-2`); and the author gets a private reviewer link for
   submission (`ARCH-3`).
-- Tell the author how much space `reproducibility_review/work/` uses and offer to
-  delete it; the reports and run log are enough to show what was checked.
 - Remind the author to confirm the current policy in The American Naturalist's
   Instructions for Authors.
+
+### 9. Finish
+
+When the author says they are done, or asks you to wrap up or clean up:
+
+1. **Make everything consistent with the final analysis.** If any data, code, or
+   software environment changed during the review, rerun the whole analysis from
+   scratch, regenerate every output (figures, tables, rendered reports, session
+   information), and recheck each manuscript item that the change could affect.
+   Do this yourself rather than leaving it to the author. Compare each regenerated
+   figure with the one in the manuscript; if it changed, put the new file in
+   `revised_manuscript/` (figures cannot carry tracked changes) and list it in
+   `WHAT_CHANGED.md`. If something cannot be regenerated, say so plainly.
+2. **Before overwriting or deleting anything outside `reproducibility_review/`**,
+   say exactly which files will be replaced or removed and how they can be
+   recovered (version control, a backup copy, or rejecting all tracked changes in
+   Word). Overwrite originals with tracked copies only when the author asks, and
+   never accept tracked changes for them.
+3. **Write `WHAT_CHANGED.md`** at the top of the project folder from
+   [templates/WHAT_CHANGED_template.md](templates/WHAT_CHANGED_template.md): a
+   high-level summary the author can send to co-authors of every change to data,
+   code, results, the README, and the manuscript, with before and after values
+   for results that changed.
+4. **Update `AUTHOR_TODO.md`** so it lists only what is still open, most important
+   first, and update the verdict in `REPRODUCIBILITY_REPORT.md`.
+5. **Clean up** after asking. By default, delete `reproducibility_review/work/`
+   (say how much space it frees) and keep `full_report.md` and `runlog.md`, which
+   are small and show what was verified; delete them too only if the author asks.
+   Delete nothing in the archive or manuscript folders except files the author
+   names. Record checksums of every file you keep in the archive and manuscript
+   folders before cleaning up, check them afterwards, and list what you deleted.
+
+When you finish, the project folder should contain the author's own folders,
+`AUTHOR_TODO.md`, `WHAT_CHANGED.md`, `REPRODUCIBILITY_REPORT.md`, any
+`revised_manuscript/` folder the author kept, and the slimmed
+`reproducibility_review/`.
 
 ## Style for code you write
 

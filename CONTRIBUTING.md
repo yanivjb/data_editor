@@ -19,6 +19,7 @@ skills/amnat-reproducibility/
 └── templates/
     ├── README_template.md         README in the journal's required order
     ├── AUTHOR_TODO_template.md    to-do list for authors, kept outside the archive
+    ├── WHAT_CHANGED_template.md   summary of changes for co-authors
     ├── codebook_template.csv      variable-level codebook
     └── AGENTS_snippet.md          rules to add to a project's AGENTS.md/CLAUDE.md
 docs/quick-start.md                steps and prompts for authors

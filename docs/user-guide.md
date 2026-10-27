@@ -19,11 +19,12 @@ make that decision.
 6. [What the agent does](#6-what-the-agent-does)
 7. [Read the report](#7-read-the-report)
 8. [Fix problems](#8-fix-problems)
-9. [Before you deposit](#9-before-you-deposit)
-10. [Slow analyses](#10-slow-analyses)
-11. [Troubleshooting](#11-troubleshooting)
-12. [Privacy](#12-privacy)
-13. [Using the scripts without an agent](#13-using-the-scripts-without-an-agent)
+9. [Wrap up](#9-wrap-up)
+10. [Before you deposit](#10-before-you-deposit)
+11. [Slow analyses](#11-slow-analyses)
+12. [Troubleshooting](#12-troubleshooting)
+13. [Privacy](#13-privacy)
+14. [Using the scripts without an agent](#14-using-the-scripts-without-an-agent)
 
 ## 1. What you need
 
@@ -130,11 +131,11 @@ Before it reads your files, the agent asks:
    - **only what you paste in**: the agent gives you commands to run and works from
      the output you choose to share.
 
-   See [Privacy](#12-privacy) before choosing.
+   See [Privacy](#13-privacy) before choosing.
 2. **Are any data sensitive or restricted?** For example locations of threatened
    species, personal or human-subject data, Indigenous data, or data under a permit
    or license that limits sharing. If so, the agent will not read those files and
-   will go through options with you (see [Before you deposit](#9-before-you-deposit)).
+   will go through options with you (see [Before you deposit](#10-before-you-deposit)).
 3. **How deep should it go?**
    - **Quick scan**: an automated check and a short summary. Minutes.
    - **Full review**: everything in the next section, ending in a written report.
@@ -255,7 +256,21 @@ If you are still writing the analysis, ask the agent to add the skill's short
 coding rules to your project's `AGENTS.md` or `CLAUDE.md`. Coding agents working
 in your project will then follow them from the start.
 
-## 9. Before you deposit
+## 9. Wrap up
+
+When you are done, ask the agent to wrap up. It will:
+
+- rerun everything with the final code and data and regenerate every figure and
+  table, so nothing in the manuscript comes from an earlier version of the
+  analysis;
+- tell you before it replaces or deletes any of your files, and how to get them
+  back;
+- write `WHAT_CHANGED.md`, a summary of every change to send to co-authors;
+- update `AUTHOR_TODO.md` to list only what is left;
+- delete its scratch files, keeping the full report and run log as a record of
+  what was checked.
+
+## 10. Before you deposit
 
 - **Keep only what is needed** in `data_and_code/`: README, data, code, and any
   outputs readers need. Remove `.Rhistory`, `.DS_Store`, caches, drafts, and
@@ -274,7 +289,7 @@ in your project will then follow them from the start.
 
 The agent never uploads or deposits anything: you do that yourself.
 
-## 10. Slow analyses
+## 11. Slow analyses
 
 If part of your analysis takes hours or days (MCMC, large simulations, SLiM,
 bioinformatics pipelines), the recommended setup is:
@@ -290,7 +305,7 @@ everything downstream of the archived outputs, and marks the slow steps "not
 rerun". Details for Bayesian models, simulations, SLiM, and pipelines are in
 [`references/long-computations.md`](../skills/amnat-reproducibility/references/long-computations.md).
 
-## 11. Troubleshooting
+## 12. Troubleshooting
 
 | Problem | What to do |
 |---------|------------|
@@ -303,7 +318,7 @@ rerun". Details for Bayesian models, simulations, SLiM, and pipelines are in
 | Your code changed while fixing and a number moved | Ask the agent to compare the before and after outputs; it keeps a log. Do not report numbers you have not regenerated. |
 | `reproducibility_review/work/` is large | It holds the agent's rerun copies and logs. Delete it once you have the reports, or ask the agent to. |
 
-## 12. Privacy
+## 13. Privacy
 
 - Your code **runs on your computer**. What leaves it is what the agent reads:
   file contents, command output, and the helper scripts' reports. These are sent to
@@ -314,7 +329,7 @@ rerun". Details for Bayesian models, simulations, SLiM, and pipelines are in
   only column names, counts, and types.
 - The agent never uploads, pushes, posts, or deposits anything.
 
-## 13. Using the scripts without an agent
+## 14. Using the scripts without an agent
 
 Both helper scripts need only Python 3 and work on their own:
 
