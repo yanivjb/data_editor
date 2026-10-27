@@ -237,7 +237,12 @@ README; I'll write that myself." It can:
 - set up quick and full run modes for slow analyses;
 - write a scripted version of a point-and-click analysis.
 
-It shows you each change. Two things to watch:
+It shows you each change. If you ask it to correct the manuscript, it works on
+copies in `revised_manuscript/` and makes every change a Word tracked change, with
+a comment saying where each new number comes from, so you and your coauthors can
+review, accept, or reject each one. Your original files are never changed.
+
+Two things to watch:
 
 - **Adding a random seed changes random results slightly.** Regenerate the affected
   numbers from the seeded code and update the manuscript.

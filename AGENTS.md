@@ -14,8 +14,9 @@ tool-specific features in the skill body.
 - Item IDs (`DOC-1`, `CODE-2`, `GUI-1`, ...) are used in `SKILL.md`, the
   references, and `scripts/audit_archive.py` (including its report sort order).
   Keep them in sync when editing.
-- `scripts/audit_archive.py` must use only the Python standard library, so authors
-  can run it without installing anything.
-- After changing a script, run `python3 tests/test_audit.py`, and add a test
+- All scripts in `scripts/` must use only the Python standard library, so authors
+  can run them without installing anything.
+- After changing a script, run `python3 tests/test_audit.py` and
+  `python3 tests/test_docx_track_changes.py`, and add a test
   project or expectation for any new check. Test projects must be made up: never
   copy an author's real data or manuscript into `tests/`.

@@ -14,7 +14,8 @@ skills/amnat-reproducibility/
 │   └── long-computations.md       Bayesian, simulation, and pipeline guidance
 ├── scripts/
 │   ├── audit_archive.py           automated scan of the archive
-│   └── manuscript_items.py        lists figures, tables, and numbers in the paper
+│   ├── manuscript_items.py        lists figures, tables, and numbers in the paper
+│   └── docx_track_changes.py      applies edits to a Word copy as tracked changes
 └── templates/
     ├── README_template.md         README in the journal's required order
     ├── AUTHOR_TODO_template.md    to-do list for authors, kept outside the archive
@@ -32,6 +33,7 @@ Check the scan after any change to the scripts:
 
 ```sh
 python3 tests/test_audit.py
+python3 tests/test_docx_track_changes.py
 ```
 
 To test the whole skill, install it into a copy of a test project, run Claude Code

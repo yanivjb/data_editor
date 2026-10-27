@@ -451,13 +451,27 @@ and only for items the author has decided on:
 
 - **Never edit the originals.** Work on copies in `revised_manuscript/` at the top
   of the project folder.
-- **Make every change visible.** For Word files, use tracked changes. For LaTeX or
-  Markdown, produce a marked-up diff (e.g. `latexdiff`) alongside the revised copy.
-  If you cannot make tracked changes, say so, and give a highlighted copy plus a
-  table of every change.
+- **Make every change visible.** For Word files, always use the bundled script,
+  which writes genuine Word tracked changes and comments:
+
+  ```sh
+  python3 <skill-dir>/scripts/docx_track_changes.py ms_files/manuscript.docx \
+      reproducibility_review/work/edits.json \
+      --out revised_manuscript/manuscript_tracked.docx --author "<name the author chooses>"
+  ```
+
+  `edits.json` lists each edit as `{"find": ..., "replace": ...}` (or
+  `"insert_after"`), with an optional `"context"` to make the location unique and a
+  `"comment"`; the script's header documents the format. It changes only the words
+  that differ, refuses any edit whose text is missing or ambiguous, and writes
+  nothing unless every edit applies. Run it with `--dry-run` first. Apply all
+  edits for one file in one run, so the tracked copy builds on the original. For
+  LaTeX or Markdown, produce a marked-up diff (e.g. `latexdiff`) alongside the
+  revised copy.
 - **Explain every changed number in a comment** (a Word comment, or a note in the
   change table): the new value, the output file and line it comes from, and the
-  old value.
+  old value. Keep `edits.json` in `reproducibility_review/work/` as the record of
+  what was changed.
 - **Use only verified values** from a rerun logged in `runlog.md`, at the
   precision the manuscript uses.
 - **Keep interpretation with the author.** When a correction changes significance,
