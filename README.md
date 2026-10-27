@@ -4,11 +4,33 @@ An optional helper for authors that works with Claude Code or Codex. Before you
 submit to *The American Naturalist*, it checks your data, code, and README against
 the journal's
 [checklist for archiving data and code](http://comments.amnat.org/2021/12/guidelines-for-archiving-code-with-data.html)
-and against reproducibility best practice, and helps you fix what you choose.
+and against reproducibility best practice, checks that your code reproduces every
+result in your manuscript, and helps you fix what you choose.
 
 It is a pre-submission aid, not part of the journal's review: the journal's data
 editors still decide what is acceptable. Use it early, while the analysis is still
 being written, when fixes are cheap.
+
+**New here? Read the [user guide](docs/user-guide.md).**
+
+## Quick start
+
+1. Install [Claude Code](https://code.claude.com/docs) or
+   [Codex](https://developers.openai.com/codex), and Python 3.
+2. Put your manuscript in `my_paper/ms_files/` and your data and code in
+   `my_paper/data_and_code/`.
+3. Install the skill into your project:
+
+   ```sh
+   git clone https://github.com/yanivjb/data_editor
+   data_editor/install.sh /path/to/my_paper
+   ```
+
+4. Start the agent in your project folder (`cd my_paper`, then `claude` or
+   `codex`) and ask: "Check this project against the AmNat data and code
+   checklist."
+5. Answer its questions about what it may read and whether any data are
+   sensitive, then work through `REPRODUCIBILITY_REPORT.md`.
 
 ## What it does
 
@@ -71,57 +93,6 @@ reads to rebuild every figure and table), and a quick mode that runs the slow st
 at reduced scale in minutes. It includes specific advice for SLiM simulations. See
 [`references/long-computations.md`](skills/amnat-reproducibility/references/long-computations.md).
 
-## Install
-
-```sh
-git clone https://github.com/yanivjb/data_editor
-cd data_editor
-./install.sh /path/to/project_name   # Claude Code and Codex, this project only
-./install.sh --user                  # Claude Code and Codex, all your projects
-./install.sh --claude --user         # Claude Code only
-```
-
-This copies `skills/amnat-reproducibility/` to `.claude/skills/` (Claude Code)
-and/or `.agents/skills/` (Codex). You can also copy the folder by hand.
-
-## Use
-
-Open your project in Claude Code or Codex and ask, for example:
-
-- "Check this project against the AmNat data and code checklist."
-- "Do a quick reproducibility scan before I submit."
-- "Write a README and codebook for the Dryad archive."
-- "My brms model takes 8 hours. How should I archive it?"
-
-In Claude Code you can also type `/amnat-reproducibility`; in Codex, `$amnat-reproducibility`
-or `/skills`. The agent asks how deep you want to go: a quick scan, a full review,
-or a review with guided fixes.
-
-To run the scripts with no agent:
-
-```sh
-python3 skills/amnat-reproducibility/scripts/audit_archive.py /path/to/project_name
-python3 skills/amnat-reproducibility/scripts/manuscript_items.py /path/to/project_name/ms_files
-```
-
-## Contents
-
-```text
-skills/amnat-reproducibility/
-├── SKILL.md                       instructions the agent follows
-├── references/
-│   ├── amnat-checklist.md         the journal checklist, with item IDs
-│   ├── data-editor-guidance.md    privacy, sensitive data, figures, point-and-click
-│   └── long-computations.md       Bayesian, simulation, and pipeline guidance
-├── scripts/
-│   ├── audit_archive.py           automated scan of the archive
-│   └── manuscript_items.py        lists figures, tables, and numbers in the paper
-└── templates/
-    ├── README_template.md         README in the journal's required order
-    ├── codebook_template.csv      variable-level codebook
-    └── AGENTS_snippet.md          rules to add to a project's AGENTS.md/CLAUDE.md
-```
-
 ## Languages
 
 The agent can read and check code in any language. The scan recognises R, R
@@ -132,11 +103,11 @@ can only rerun code whose runtime is installed; MATLAB and Mathematica also need
 licences. Otherwise it checks by reading, marks results **not rerun**, and gives
 you the commands to run yourself.
 
-## Testing
+## More
 
-`tests/` holds small made-up projects with planted problems. Run
-`python3 tests/test_audit.py` to check the scan; `tests/README.md` has answer keys
-for trying the whole skill in Claude Code or Codex.
+- [User guide](docs/user-guide.md): setup, what the agent does, reading the
+  report, fixing problems, privacy, troubleshooting.
+- [Contributing](CONTRIBUTING.md): repository layout and tests.
 
 ## Source and caveats
 
