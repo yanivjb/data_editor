@@ -42,9 +42,7 @@ the choice of mode. Do not start editing during a scan or review.
 `REPRODUCIBILITY_REPORT.md`, `AUTHOR_TODO.md`, and `WHAT_CHANGED.md` are often
 shared with co-authors who never saw the conversation, or reopened weeks later.
 Use plain language, no checklist IDs, no references to the chat ("as discussed"),
-and enough context that someone opening a file cold knows what to do. Still help
-the author with the fixes in the session; the files are a record, not a
-substitute.
+and enough context that someone opening a file cold knows what to do.
 
 **Coming back after changes.** If the project already has a
 `reproducibility_review/` folder, this is a re-review. Read the previous
@@ -441,6 +439,11 @@ End the review by separating what is left: what only the authors can supply or
 decide (in `AUTHOR_TODO.md`), and small, safe things you could still do, each with
 its cost and whether it changes any file (e.g. "rebuild the ZIP files without
 `__MACOSX` folders; contents verified by checksum"). Do them only if asked.
+
+Then ask the author whether they want to work through `AUTHOR_TODO.md` together
+now, item by item (for example drafting missing figure code, or comparing which
+model the paper used), or take the list away and come back later. Follow their
+choice.
 
 ### 7. Fix (only with approval)
 
