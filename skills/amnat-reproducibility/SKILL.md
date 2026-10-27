@@ -1,6 +1,6 @@
 ---
 name: amnat-reproducibility
-description: Optional helper for authors preparing data, code, and README for submission to The American Naturalist (or a journal with a similar policy). Checks the project against the journal's data and code archiving checklist and reproducibility best practice (README contents and order, relative paths, CSV data, codebook, seeds, package versions, clean-session reruns, long Bayesian/simulation/bioinformatics runs, Dryad/Zenodo deposit) and helps fix what the author chooses. Use when an author asks to check reproducibility, get ready for submission, prepare a Dryad or Zenodo archive, write a data README or codebook, handle slow analyses, or respond to a data editor report.
+description: Optional helper for authors preparing data, code, and README for submission to The American Naturalist (or a journal with a similar policy). Checks the project against the journal's data and code archiving checklist and reproducibility best practice (README contents and order, relative paths, CSV data, codebook, seeds, package versions, clean-session reruns, long Bayesian/simulation/bioinformatics runs, Dryad/Zenodo deposit) and helps fix what the author chooses, including tracked-change manuscript corrections on request. Use when an author asks to check reproducibility, check that code reproduces the manuscript, get ready for submission, prepare a Dryad or Zenodo archive, write a data README or codebook, handle slow analyses, or respond to a data editor report.
 ---
 
 # AmNat reproducibility helper
@@ -44,7 +44,13 @@ These protect the scientific record. Do not break them, even when asked casually
 
 1. **Never change data values.** Do not edit, reorder, recode, or "clean" raw data
    files. Converting an `.xlsx` sheet to `.csv` must reproduce cell values exactly.
-   Data cleaning belongs in code (`CODE-8`).
+   Data cleaning belongs in code (`CODE-8`). When the author identifies a genuine
+   data error (e.g. two plants sharing an ID), make the correction in a clearly
+   labelled step in the code, not in the raw file, so readers can see it. Say what
+   the correction changes: records gained or dropped from each analysis, sample
+   sizes, results. Describe it for readers in a "Data corrections" section of the
+   README. Edit a raw file only if the author insists after hearing this; then keep
+   the original outside the archive and document the change the same way.
 2. **Never change results.** Code edits for reproducibility (paths, seeds, package
    loading, comments, file layout) must not change any reported number, table, or
    figure. Before editing code that produces results, record the current outputs;
@@ -89,7 +95,12 @@ These protect the scientific record. Do not break them, even when asked casually
    [templates/AUTHOR_TODO_template.md](templates/AUTHOR_TODO_template.md): one
    checkbox per item, saying what is needed, where it goes, and why. Leave a
    README section out until its content is known, rather than filling it with a
-   placeholder; list it in `AUTHOR_TODO.md` instead.
+   placeholder; list it in `AUTHOR_TODO.md` instead. Use exactly the file names in
+   "Where review files go"; do not invent others, and link to them with paths
+   relative to the project folder.
+9. **Ask once, then respect the answer.** Explain the consequence of a choice and
+   ask. If the author says to proceed or move on, do so: record any open question
+   in `AUTHOR_TODO.md` and the consequence in the full report, and do not ask again.
 
 ## Workflow
 
@@ -120,6 +131,7 @@ everything else goes in one review folder:
 project_name/
 ├── REPRODUCIBILITY_REPORT.md      one-page summary for the author (step 6)
 ├── AUTHOR_TODO.md                 what only the author can supply or decide
+├── revised_manuscript/            only if the author asks for manuscript edits (step 7)
 └── reproducibility_review/
     ├── full_report.md             every checklist item and the full results table
     ├── runlog.md                  every command run, with exit status and outputs
@@ -322,6 +334,23 @@ its data and code), `CODE-4` and `CODE-10` (code labels match figure and table
 numbers), and `CODE-5` (packages used are cited in the paper). Report mismatches to
 the author; do not change the code or the manuscript to make them agree.
 
+**Find out why each mismatch happened** before anyone corrects anything. Do not
+assume the code is right and the paper wrong. Likely causes:
+
+- a typo or rounding difference in the manuscript;
+- the manuscript reports an earlier run (an older model, older data, or a
+  different software version): look at old rendered outputs, version history, or
+  dates;
+- the code changed since the paper was written, possibly introducing an error,
+  e.g. a join that now duplicates or drops records;
+- a different subset or definition (all plants vs. those with seed data, raw vs.
+  model-adjusted means).
+
+Record the likely cause and your evidence for it. For a large discrepancy
+(e.g. χ² 21.2 in the paper, 15.8 from the code), say plainly that the cause is
+unknown if you cannot establish it. Flag any mismatch that changes a conclusion,
+e.g. a result that was significant and no longer is.
+
 If there is no manuscript, mark these items **can't tell** and say in the report's
 verdict that results were not checked against the paper. Offer to do this step
 when the author can add the manuscript to `ms_files/`.
@@ -339,6 +368,9 @@ in plain language, with no checklist IDs:
 2. **Results check**, one line: e.g. "38 of 41 results reproduced; 2 have no code;
    1 differs (Results ¶2: 45.3% in the paper, 43.3% from the code)." List every
    mismatch and every result with no code; these matter most.
+   If any mismatch changes a conclusion (significance, direction, or a claim in
+   the abstract), add a line **"Conclusions affected"** naming them; these come
+   first.
 3. **What to fix**, at most about ten one-line items, most important first, required
    before recommended. Group similar findings ("12 column names contain spaces").
 4. **What we need from you**: "See `AUTHOR_TODO.md` (5 items)."
@@ -408,6 +440,36 @@ Typical fixes, each done only after the author agrees:
   analysis; report it to the author rather than adjusting the script to match.
 - **Restricted data** (`SENS-2` to `SENS-5`): help write the de-identification
   script (run outside the archive) and the README statement on withheld data.
+- **Data corrections** (rule 1): a labelled correction step in the code, its
+  consequences for sample sizes and results, and a "Data corrections" section in
+  the README written for readers.
+
+#### Manuscript corrections (only if the author asks)
+
+Correcting the paper goes beyond checking the archive, so do it only on request,
+and only for items the author has decided on:
+
+- **Never edit the originals.** Work on copies in `revised_manuscript/` at the top
+  of the project folder.
+- **Make every change visible.** For Word files, use tracked changes. For LaTeX or
+  Markdown, produce a marked-up diff (e.g. `latexdiff`) alongside the revised copy.
+  If you cannot make tracked changes, say so, and give a highlighted copy plus a
+  table of every change.
+- **Explain every changed number in a comment** (a Word comment, or a note in the
+  change table): the new value, the output file and line it comes from, and the
+  old value.
+- **Use only verified values** from a rerun logged in `runlog.md`, at the
+  precision the manuscript uses.
+- **Keep interpretation with the author.** When a correction changes significance,
+  direction, or a conclusion, propose the wording in a comment and say what
+  changed. If the author asks you to rewrite the text, keep claims to what the
+  verified output supports, and flag the change in the short report.
+- **Keep the numbers and Methods consistent.** If the final results now come from
+  a different software environment or a corrected data set than the original
+  analysis, make sure the revised Methods says so, and record it as a revised
+  analysis in the full report.
+- Give the author one list of all changes made, in the full report, so co-authors
+  can follow them.
 
 After fixing, rerun the audit script and the clean-session run, and update the
 report.

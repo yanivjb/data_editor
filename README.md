@@ -11,7 +11,8 @@ It is a pre-submission aid, not part of the journal's review: the journal's data
 editors still decide what is acceptable. Use it early, while the analysis is still
 being written, when fixes are cheap.
 
-**New here? Read the [user guide](docs/user-guide.md).**
+**New here?** Start with the [quick start](docs/quick-start.md) (suggested steps and
+prompts), and see the [user guide](docs/user-guide.md) for setup and details.
 
 ## Quick start
 
@@ -107,6 +108,7 @@ you the commands to run yourself.
 
 ## More
 
+- [Quick start](docs/quick-start.md): suggested order of work and prompts to paste.
 - [User guide](docs/user-guide.md): setup, what the agent does, reading the
   report, fixing problems, privacy, troubleshooting.
 - [Contributing](CONTRIBUTING.md): repository layout and tests.

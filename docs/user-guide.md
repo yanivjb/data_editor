@@ -1,7 +1,8 @@
 # User guide
 
 This guide walks you through using the AmNat reproducibility skill, from setup to
-depositing your archive. It assumes you are comfortable running your own analysis
+depositing your archive. For a short list of steps and prompts to paste, see the
+[quick start](quick-start.md). It assumes you are comfortable running your own analysis
 code, but not necessarily with the terminal or with coding agents.
 
 The skill is an optional pre-submission aid. It does not submit anything to the

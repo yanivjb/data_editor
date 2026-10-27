@@ -67,6 +67,14 @@ analyses use the file. How it links to other files, e.g. "joins to
 withheld or changed (e.g. coordinates rounded to 0.1°), why, which results
 cannot be reproduced from the shared files, and how to request the full data.>
 
+### Data corrections
+
+<Only if errors in the raw data are corrected by the code: what was wrong, how
+the code corrects it (and in which script), and its effect, e.g. "One harvest
+record labelled 131 belongs to a different plant; `code/01_clean.R` relabels it
+131b. That plant has no germination or treatment data, so it is excluded from
+analyses that need them (n = 571).">
+
 ### Code files
 
 | File | Purpose | Reads | Writes | Manuscript output |

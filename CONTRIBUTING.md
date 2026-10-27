@@ -20,6 +20,7 @@ skills/amnat-reproducibility/
     ├── AUTHOR_TODO_template.md    to-do list for authors, kept outside the archive
     ├── codebook_template.csv      variable-level codebook
     └── AGENTS_snippet.md          rules to add to a project's AGENTS.md/CLAUDE.md
+docs/quick-start.md                steps and prompts for authors
 docs/user-guide.md                 guide for authors
 tests/                             made-up projects with planted problems
 install.sh                         copies the skill into a project or user folder
