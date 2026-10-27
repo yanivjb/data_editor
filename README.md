@@ -16,7 +16,7 @@ prompts), and see the [user guide](docs/user-guide.md) for setup and details.
 
 ## Quick start
 
-The five steps below get a first review running. For the whole process, see the
+The steps below get a first review running. For the whole process, see the
 **[full quick start](docs/quick-start.md)**: a suggested workflow from first
 review to deposit (going through mismatches, answering the to-do list, fixing the
 archive, correcting the manuscript with tracked changes, and wrapping up), with
