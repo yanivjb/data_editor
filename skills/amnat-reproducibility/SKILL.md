@@ -170,11 +170,34 @@ project_name/
 
 If the project has `ms_files/` and `data_and_code/`, use them. Otherwise ask the
 author where the archive root (the folder that will be deposited) and the manuscript
-are. The manuscript is optional but strongly recommended: without it you cannot
-check that the code reproduces the paper (step 5), so ask for the current draft and
-supplement before starting a full review. If the author's project is mixed together,
-suggest this layout, but do not move files without their agreement; moving files can
-break paths in their code.
+are.
+
+**If the files are not in this layout** (everything in one folder, the manuscript
+somewhere else, data and code scattered), offer to help organise them. Show the
+author the layout you propose, file by file, and wait for agreement. Then:
+
+- copy rather than move when the originals live elsewhere (e.g. a manuscript in a
+  Dropbox folder), and say which you did;
+- after moving code or data, update the paths in the code, rerun it, and confirm
+  the outputs are unchanged (ground rule 2);
+- leave out of `data_and_code/` anything that is not part of the archive (drafts,
+  notes, old versions), but delete nothing.
+
+The author may prefer to keep their own layout; then work with it, and record
+where the archive and the manuscript are in the full report.
+
+**If something is missing, ask for it** before going further, and say why it
+matters. Check for:
+
+- the manuscript and supplement: optional, but without them you cannot check that
+  the code reproduces the paper (step 5), so ask for the current versions;
+- data files that the code reads but that are not in the project;
+- code for analyses described in the Methods (including any run in other software);
+- the README, if there is one; if not, offer to draft it later (step 7);
+- outputs of slow steps, if the code expects to read them.
+
+If the author cannot supply something yet, record it in `AUTHOR_TODO.md` and carry
+on with what you have.
 
 The manuscript is used only for checking. It is not part of the archive.
 

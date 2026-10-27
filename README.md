@@ -35,17 +35,18 @@ can paste at each step, plus troubleshooting and other reference.
 
    The README for your data and code goes in `data_and_code/`, at the top. If you
    don't have one yet, the agent can draft it. Inside `data_and_code/`, any
-   sensible structure works.
-3. Install the skill into your project:
+   sensible structure works. If your files are elsewhere or arranged differently,
+   the agent will offer to help reorganise them.
+3. Start the agent in your project folder (`cd selfing_speciation`, then `claude`
+   or `codex`) and ask it to install the skill:
 
-   ```sh
-   git clone https://github.com/yanivjb/data_editor
-   data_editor/install.sh /path/to/selfing_speciation
-   ```
+   > Clone https://github.com/yanivjb/data_editor somewhere outside this project
+   > and run its install.sh for this folder.
 
-4. Start the agent in your project folder (`cd selfing_speciation`, then `claude` or
-   `codex`) and ask: "Check this project against the AmNat data and code
-   checklist."
+   Then quit the agent and start it again, so it loads the skill. (To install by
+   hand instead: `git clone https://github.com/yanivjb/data_editor`, then
+   `data_editor/install.sh /path/to/selfing_speciation`.)
+4. Ask: "Check this project against the AmNat data and code checklist."
 5. Answer its questions about what it may read and whether any data are
    sensitive. Read the one-page `REPRODUCIBILITY_REPORT.md` and work through
    `AUTHOR_TODO.md`; details are in `reproducibility_review/`.

@@ -255,7 +255,14 @@ If your project is organised differently, the agent will ask where things are; i
 you move files to match this layout, rerun your code, since paths in your scripts
 may need updating.
 
-**Installing.** With git: `git clone https://github.com/yanivjb/data_editor`, then
+**Installing.** The easiest way is to ask the agent. Start it in your project
+folder and say:
+
+> Clone https://github.com/yanivjb/data_editor somewhere outside this project and
+> run its install.sh for this folder.
+
+Then quit and restart the agent so it loads the skill. To update later, ask the
+same again. To install by hand with git: `git clone https://github.com/yanivjb/data_editor`, then
 `data_editor/install.sh /path/to/selfing_speciation`. Use `--user` instead of a
 path to install for all your projects, and `--claude` or `--codex` for one tool.
 Without git: on the GitHub page click **Code → Download ZIP**, unzip it, and copy
