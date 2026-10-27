@@ -12,6 +12,11 @@ being written, when fixes are cheap.
 
 ## What it does
 
+- **Asks first** what it may read, because a coding agent sends what it reads to
+  its model provider: everything, code and manuscript but not data, or only what
+  you paste in. It also asks whether any data are sensitive (e.g. threatened-species
+  locations, personal data, permit limits) and guides you through sharing options.
+  It never uploads, pushes, or deposits anything.
 - **Scans** the project (`scripts/audit_archive.py`, Python standard library only)
   for a missing or incomplete README, absolute paths and `setwd()`, packages loaded
   after data import, missing seeds, data the code reads but the project lacks,
@@ -23,8 +28,14 @@ being written, when fixes are cheap.
   finishes.
 - **Checks the paper is reproduced**: it reads your manuscript and supplement,
   lists every figure, table, and reported number, traces each one to the code
-  that makes it, and records whether the rerun matches (e.g. "38 of 41 items
-  reproduced; 2 not found in code; 1 mismatch").
+  that makes it, and records whether the rerun matches (e.g. "38 of 41
+  computational items reproduced; 2 not found in code; 1 mismatch"). Every
+  "match" is backed by a logged command and output file.
+- **Asks about figures** that look drawn, photographed, or polished in a graphics
+  editor, checks that editing did not change the data shown, and records each in
+  the README.
+- **Flags point-and-click analyses** (Excel, JMP, Prism, GUI-only phylogenetics,
+  and so on), which cannot be reproduced, and helps write scripted versions.
 - **Helps fix**, with your approval: drafts a README and codebook, exports Excel
   sheets to CSV, replaces absolute paths, adds seeds and figure/table labels, and
   sets up quick/full run modes for long analyses.
@@ -57,7 +68,7 @@ too; the agent will ask where things are.
 For MCMC, large simulations, and bioinformatics pipelines, the skill recommends
 archiving the full code, the full outputs of the slow steps (which downstream code
 reads to rebuild every figure and table), and a quick mode that runs the slow steps
-at reduced scale in minutes. See
+at reduced scale in minutes. It includes specific advice for SLiM simulations. See
 [`references/long-computations.md`](skills/amnat-reproducibility/references/long-computations.md).
 
 ## Install
@@ -100,6 +111,7 @@ skills/amnat-reproducibility/
 ├── SKILL.md                       instructions the agent follows
 ├── references/
 │   ├── amnat-checklist.md         the journal checklist, with item IDs
+│   ├── data-editor-guidance.md    privacy, sensitive data, figures, point-and-click
 │   └── long-computations.md       Bayesian, simulation, and pipeline guidance
 ├── scripts/
 │   ├── audit_archive.py           automated scan of the archive

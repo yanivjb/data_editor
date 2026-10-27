@@ -53,6 +53,15 @@ which analyses use the file. Missing values are coded as `NA`.
 (DATA-3); if you use one, name it here. Explain how files link to each other,
 e.g. "join on `plant_id`". -->
 
+### Restricted or modified data
+
+<!-- Delete if all data are shared in full (SENS-4). -->
+
+TODO(author): Which data are withheld, coarsened, or de-identified; why (e.g.
+threatened-species locations, permit conditions, human-subject data); exactly
+what was changed (e.g. coordinates rounded to 0.1°); which results cannot be
+reproduced from the shared files; and how to request the full data.
+
 ### Code files
 
 | File | Purpose | Reads | Writes | Manuscript output |
@@ -88,6 +97,16 @@ Packages installed by the scripts themselves: TODO(author) or "none".
 
 TODO(author): Random seeds used, and how to start from the provided
 intermediate outputs instead of rerunning slow steps.
+
+### Figures not produced entirely by code
+
+<!-- Delete if every figure comes straight from the code (FIG-3). -->
+
+| Figure / panel | How it was made | Software | Code-made base file |
+|----------------|-----------------|----------|---------------------|
+| Figure 1 | Conceptual diagram, drawn by hand | TODO(author), e.g. Inkscape | — |
+| Figure 2 | Made by `code/04_figures.R`, then labels and layout edited; data unchanged | TODO(author), e.g. Illustrator | `outputs/fig2_base.pdf` |
+| Figure 3A | Photograph of study organism | — | — |
 
 ### Computational cost
 

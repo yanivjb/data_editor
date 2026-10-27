@@ -102,6 +102,23 @@ Python equivalent: `os.environ.get("RUN_MODE", "quick")` or a `--full` flag.
   cores, and wall time. Keep cluster-specific paths and module loads in one config
   file or the job script, not in the analysis code.
 
+### SLiM and other forward simulators
+
+- **Archive the model and the driver**: the `.slim` file(s), the script that calls
+  them (`slim -s SEED -d N=500 -d rep=1 model.slim`), and the parameter grid.
+- **Seed every run explicitly** with `slim -s` or `setSeed()` in the model. SLiM
+  otherwise picks a random seed, so record it in each replicate's output (e.g.
+  write `getSeed()` to the output file).
+- **Record versions** of SLiM and of any downstream tools (pyslim, tskit, msprime
+  for recapitation, which also needs its own seed). Results with the same seed can
+  differ between SLiM versions.
+- **Archive the outputs the statistics start from**: per-replicate summary tables,
+  VCFs, or `.trees` files if size allows; otherwise per-replicate summaries, with
+  the README saying what was not archived.
+- **Quick mode** with fewer replicates, generations, or a smaller population only
+  shows that the pipeline runs. Changing population size or run length changes the
+  dynamics, so quick-mode output is never compared with the paper.
+
 ## Bioinformatics pipelines
 
 - **Raw sequence data go to a sequence archive** (NCBI SRA, ENA, or DDBJ), not

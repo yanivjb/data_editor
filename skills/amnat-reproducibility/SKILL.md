@@ -20,8 +20,11 @@ fix. The author decides what to change; the journal decides what is acceptable.
 
 The checklist is in [references/amnat-checklist.md](references/amnat-checklist.md).
 Read it before auditing and cite item IDs (e.g. `CODE-2`, `DATA-8`) in everything
-you report. For slow analyses (MCMC, simulations, bioinformatics pipelines), also
-read [references/long-computations.md](references/long-computations.md).
+you report. Also read
+[references/data-editor-guidance.md](references/data-editor-guidance.md) (privacy,
+sensitive data, figures not made by code, point-and-click analyses; IDs `PRIV`,
+`SENS`, `FIG`, `GUI`) and, for slow analyses (MCMC, simulations including SLiM,
+bioinformatics pipelines), [references/long-computations.md](references/long-computations.md).
 
 ## Choosing how deep to go
 
@@ -31,7 +34,9 @@ Unless the author has already said, ask which they want:
 2. **Full review**: steps 1–6 below, ending in a written report. No files changed.
 3. **Guided fixes**: full review, then fix the items the author picks (step 7).
 
-Respect the choice. Do not start editing during a scan or review.
+In every mode, ask the privacy and sensitive-data questions in "Before you start"
+first, before the audit script or anything else reads the author's files. Respect
+the choice of mode. Do not start editing during a scan or review.
 
 ## Ground rules
 
@@ -56,8 +61,35 @@ These protect the scientific record. Do not break them, even when asked casually
 5. **Required vs recommended.** Make clear which findings block compliance (REQ)
    and which are good practice (REC). Do not inflate recommendations into demands,
    and do not comment on code elegance; the journal only cares that it works.
+6. **Verify, never assume.** Every "pass", "match", or "runs" must rest on something
+   you actually ran or read in this session, logged with the command, exit status,
+   and output file. If you did not run it, the status is "not rerun"; if you only
+   read the code, say "checked by reading". Never fill in a status from what the
+   code looks like it should produce.
+7. **Only what the author allows leaves their computer.** Everything you read is
+   sent to your model provider, so ask first (see "Before you start"). Never
+   upload, deposit, push, email, or post anything; those are the author's actions
+   (`PRIV-4`).
 
 ## Workflow
+
+### Before you start: privacy and sensitive data
+
+Before opening any data file, manuscript, or output, ask the author two questions
+and record the answers at the top of the report:
+
+1. **What may leave this computer?** Explain that what you read is sent to the model
+   provider, then offer: (a) everything; (b) code, README, and manuscript, but not
+   data contents; (c) only what the author pastes in (`PRIV-1`). Under (b), run the
+   audit script with `--no-values` and do not print data rows (`PRIV-2`).
+2. **Are any data sensitive or restricted?** For example threatened-species
+   locations, human-subject or personal data, Indigenous data, or data under permit
+   or license limits (`SENS-1`). If yes, do not read those files' contents, and
+   guide the author through the options in
+   [references/data-editor-guidance.md](references/data-editor-guidance.md)
+   (`SENS-2` to `SENS-5`).
+
+Running code locally is fine under every option; what matters is what you read.
 
 ### 1. Find the archive and the manuscript
 
@@ -117,7 +149,10 @@ the things the journal's data editors report most often:
 - data left only in Excel or proprietary formats;
 - data files that the code reads but that are missing from the archive;
 - scripts that do not run in a fresh session (absolute paths, objects assumed to
-  exist in the workspace, packages loaded halfway through, undocumented run order).
+  exist in the workspace, packages loaded halfway through, undocumented run order);
+- results produced by point-and-click software with no script, which the data
+  editor does not accept (`GUI-1`): ask the author how each analysis in the Methods
+  was run if no code for it is found.
 
 For README content (`DOC-2`), check the required order as well as presence:
 citation → authors and contacts → summary → who collected data and wrote code →
@@ -134,9 +169,15 @@ fresh process, in the documented order:
 - Python: a fresh virtual environment with the listed requirements, then
   `python script.py`.
 
-Record whether each step finishes, any errors or warnings, run time, and whether the
-outputs match the outputs already in the project or the numbers in the manuscript.
-If the runtime is not installed, say so plainly; do not claim the code runs.
+Log every command you run in `REPRODUCIBILITY_RUNLOG.md` in the project folder
+(outside the archive): the command, working directory, start time, run time, exit
+status, warnings or errors, and the output files written. This log is the evidence
+for every "runs" and "match" in the report. If the runtime is not installed, say
+so plainly; do not claim the code runs.
+
+Render Quarto and R Markdown documents with caches cleared (delete `*_cache/` and
+`_freeze/` folders, or render a fresh copy of the archive), so the clean run does
+not reuse old results.
 
 Ask before starting anything slow. For steps that take hours (MCMC, simulations,
 pipelines), do not rerun them at full scale. Instead check the structure in
@@ -188,6 +229,7 @@ that code (step 4), and compare. Record one row per item:
 | Table 2, row "Self" | 41.2% (95% CI 35.0–47.5) | `code/03_summaries.R:88` | `outputs/table2.csv` | 41.2% (35.0–47.5) | match |
 | Figure 3B | (plot) | `code/04_figures.R:120` | `outputs/fig3.pdf` | same data, axes, and groups | match |
 | Results ¶2, "n = 214 seed batches" | 214 | not found | — | — | not found in code |
+| Figure 1 | (diagram) | — | — | — | not computational |
 
 Status is one of:
 
@@ -200,14 +242,22 @@ Status is one of:
 - **not found in code**: no code in the archive produces the item (a `DATA-1`
   failure unless the value is not computed, e.g. a sample size taken from the
   study design; say so if that is the case).
+- **edited after code**: a figure made by code and then changed in another tool.
+  Also give match or mismatch for its data content (`FIG-2`).
+- **not computational**: a conceptual diagram, drawn schematic or map, or photo or
+  video, confirmed as such by the author (`FIG-1`).
 
 For **figures**, open the regenerated figure and the manuscript figure (from
 `ms_files/` or the manuscript itself) and compare them visually: same data, panels,
-axes, groups, and overall pattern. Styling differences made later in a graphics
-editor are fine if the author confirms them; say which figures you could not view.
+axes, groups, and overall pattern. Say which figures you could not view. When a
+figure does not match exactly, or looks drawn, photographed, or polished in a
+graphics editor, ask the author how it was made before assigning a status; do not
+guess (`FIG-1`). Agree with them on a README entry for each figure or panel that is
+not produced entirely by code (`FIG-3`).
 
-**Summarise coverage** at the top of the table, e.g. "38 of 41 items reproduced;
-2 not found in code; 1 mismatch". Use the table to assess `DATA-1` (every result has
+**Summarise coverage** at the top of the table, counting only computational items,
+e.g. "38 of 41 computational items reproduced; 2 not found in code; 1 mismatch;
+3 not computational" (`FIG-4`). Use the table to assess `DATA-1` (every result has
 its data and code), `CODE-4` and `CODE-10` (code labels match figure and table
 numbers), and `CODE-5` (packages used are cited in the paper). Report mismatches to
 the author; do not change the code or the manuscript to make them agree.
@@ -222,14 +272,15 @@ Write `REPRODUCIBILITY_REPORT.md` in the project folder, outside the archive (or
 show it in chat if the author prefers), with:
 
 1. A one-paragraph verdict: would a data editor likely accept this archive as is,
-   and does it reproduce the paper's results?
+   and does it reproduce the paper's results? State what the author allowed you to
+   read (`PRIV-1`) and whether any data are restricted (`SENS-1`).
 2. **Required fixes**: failing or partial REQ items, each with ID, evidence, and the
    concrete change needed.
 3. **Recommended improvements**: REC items, briefly.
 4. **Questions for the author**: every `TODO(author)` item (metadata you could not
    find).
-5. **Clean-run results** from step 4 and the **manuscript traceability table**,
-   with its coverage summary, from step 5.
+5. **Clean-run results** from step 4, pointing to `REPRODUCIBILITY_RUNLOG.md`, and
+   the **manuscript traceability table**, with its coverage summary, from step 5.
 6. A table of all checklist IDs with status.
 
 Keep it short and specific. The author should be able to work through it in order.
@@ -276,6 +327,15 @@ Typical fixes, each done only after the author agrees:
   against reported values, and write the README's "Computational cost" section,
   following [references/long-computations.md](references/long-computations.md).
   Never overwrite the archived full outputs with quick-mode results.
+- **Figures not produced entirely by code** (`FIG-3`): write the README section
+  from what the author told you, and archive the code-made base file of each
+  edited figure.
+- **Point-and-click analyses** (`GUI-2`): write the scripted version following
+  [references/data-editor-guidance.md](references/data-editor-guidance.md), rerun
+  it, and compare with the reported values. Any difference makes this a revised
+  analysis; report it to the author rather than adjusting the script to match.
+- **Restricted data** (`SENS-2` to `SENS-5`): help write the de-identification
+  script (run outside the archive) and the README statement on withheld data.
 
 After fixing, rerun the audit script and the clean-session run, and update the
 report.

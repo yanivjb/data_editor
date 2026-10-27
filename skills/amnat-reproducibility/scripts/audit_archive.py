@@ -6,11 +6,13 @@ false positives and misses. Item IDs refer to references/amnat-checklist.md.
 Uses only the Python standard library.
 
 Usage:
-    python3 audit_archive.py PROJECT_DIR [--out REPORT.md] [--json]
+    python3 audit_archive.py PROJECT_DIR [--out REPORT.md] [--json] [--no-values]
 
 If PROJECT_DIR contains a data_and_code/ folder, that folder is scanned as the
 archive. A ms_files/ folder (the manuscript) is never scanned. A relative --out
-path is written to PROJECT_DIR, outside the archive.
+path is written to PROJECT_DIR, outside the archive. --no-values keeps data
+values out of the report (column names, counts, and types only), for authors who
+do not want data contents read by an agent.
 """
 
 import argparse
@@ -28,7 +30,12 @@ SKIP_DIRS = {
     ".claude", ".agents", ".codex", "ms_files",
 }
 ARCHIVE_DIR = "data_and_code"
-CODE_EXT = {".r", ".rmd", ".qmd", ".py", ".ipynb", ".m", ".jl", ".sh", ".do", ".sas"}
+CODE_EXT = {".r", ".rmd", ".qmd", ".py", ".ipynb", ".m", ".jl", ".sh", ".do", ".sas", ".slim", ".eidos"}
+SLIM_EXT = {".slim", ".eidos"}
+GUI_EXT = {
+    ".jmp", ".jrp", ".jrn", ".spv", ".pzfx", ".pzf", ".mtw", ".mpj", ".mpx", ".stw",
+    ".sta", ".geneious", ".mxd", ".aprx", ".qgs", ".qgz",
+}
 TABLE_EXT = {".csv", ".tsv"}
 EXCEL_EXT = {".xlsx", ".xlsm", ".xls", ".ods"}
 OTHER_DATA_EXT = {
@@ -72,12 +79,12 @@ STOCHASTIC = re.compile(
     r"rmultinom|rnbinom|rlnorm|boot|bootMer|brm|stan|sampling|cmdstan\w*|MCMCglmm|"
     r"jags\w*|run\.jags|simulate|replicate|kmeans|randomForest|ranger|"
     r"train_test_split|shuffle|permutation)\s*\(|np\.random\.|\brandom\.\w+\(|"
-    r"default_rng\s*\(|\.sample\s*\(|\brand[ni]?\s*\("
+    r"default_rng\s*\(|\.sample\s*\(|\brand[ni]?\s*\(|^\s*slim\s|[\s;|&\"']slim\s"
 )
 SEED = re.compile(
     r"\bset\.seed\s*\(|\bseed\s*=|np\.random\.seed\s*\(|random\.seed\s*\(|"
     r"default_rng\s*\(\s*\d|RandomState\s*\(\s*\d|torch\.manual_seed|\brng\s*\(\s*\d|"
-    r"RNGkind\s*\("
+    r"RNGkind\s*\(|\bsetSeed\s*\(|\bslim\b.*\s-s(?:eed)?\s"
 )
 FIG_TAB = re.compile(r"\b(fig(ure)?|tab(le)?|appendix|supp\w*)\.?\s*[A-Z]?\d", re.IGNORECASE)
 COLUMN_NAME_OK = re.compile(r"^[A-Za-z][A-Za-z0-9_.]*$")
@@ -98,6 +105,9 @@ class Audit:
         self.root = root
         self.findings = []
         self.inventory = defaultdict(list)
+        self.no_values = False
+        self.slim_unseeded = []
+        self.slim_seeded_by_driver = False
 
     def add(self, item, level, message, where=None):
         self.findings.append({"item": item, "level": level, "where": where, "message": message})
@@ -132,7 +142,7 @@ def code_lines(path):
                 if cell.get("cell_type") == "code":
                     lines.append((n, s, s.lstrip().startswith("#")))
         return lines
-    comment = "%" if path.suffix.lower() == ".m" else "#"
+    comment = {".m": "%", ".slim": "//", ".eidos": "//"}.get(path.suffix.lower(), "#")
     in_chunk = path.suffix.lower() not in {".rmd", ".qmd"}
     out = []
     for n, s in enumerate(text.splitlines(), 1):
@@ -149,8 +159,8 @@ def code_lines(path):
     return out
 
 
-def strip_comment(s):
-    return re.sub(r"(^|\s)#.*$", "", s)
+def strip_comment(s, slim=False):
+    return re.sub(r"(^|\s)//.*$" if slim else r"(^|\s)#.*$", "", s)
 
 
 def check_code(audit, path, all_files):
@@ -166,7 +176,7 @@ def check_code(audit, path, all_files):
             if FIG_TAB.search(s):
                 n_labels += 1
             continue
-        code = strip_comment(s)
+        code = strip_comment(s, slim=path.suffix.lower() in SLIM_EXT)
         if not code.strip():
             continue
         n_code += 1
@@ -188,6 +198,8 @@ def check_code(audit, path, all_files):
             stochastic = n
         if SEED.search(code):
             seeded = True
+            if re.search(r"\bslim\b.*\s-s(?:eed)?\s", code):
+                audit.slim_seeded_by_driver = True
         for m in READ_PATH.finditer(code):
             check_read_target(audit, path, n, m.group(m.lastindex), all_files)
         for m in HERE_PATH.finditer(code):
@@ -197,7 +209,10 @@ def check_code(audit, path, all_files):
                 check_read_target(audit, path, n, target, all_files, from_root=True)
     if late_loads:
         audit.add("CODE-1", "REQ", f"Packages loaded after data import (lines {', '.join(map(str, late_loads[:8]))}); load packages first.", audit.rel(path, late_loads[0]))
-    if stochastic and not seeded:
+    if path.suffix.lower() in SLIM_EXT:
+        if not seeded:
+            audit.slim_unseeded.append(path)  # may be seeded by a driver; decided in main()
+    elif stochastic and not seeded:
         audit.add("CODE-13", "REC", "Stochastic function used but no random seed found.", audit.rel(path, stochastic))
     if n_code > 20 and n_comments / max(n_code, 1) < 0.05:
         audit.add("CODE-3", "REQ", f"Few comments ({n_comments} comment lines for {n_code} code lines); explain the purpose of each block.", audit.rel(path))
@@ -274,7 +289,8 @@ def check_table(audit, path, documented_text):
     for i, h in enumerate(header):
         k = kinds[i]
         if k["number"] and k["text"] and min(k["number"], k["text"]) / (k["number"] + k["text"]) > 0.001:
-            audit.add("DATA-11", "REC", f"Column `{h}` mixes numbers ({k['number']}) and text ({k['text']}), e.g. {fmt_list(examples[i]['text'])}", audit.rel(path))
+            eg = "" if audit.no_values else f", e.g. {fmt_list(examples[i]['text'])}"
+            audit.add("DATA-11", "REC", f"Column `{h}` mixes numbers ({k['number']}) and text ({k['text']}){eg}", audit.rel(path))
     codes = [c for c in missing if c != "NA"]
     if codes:
         detail = ", ".join(f"`{c}` x{missing[c]}" for c in codes)
@@ -354,6 +370,7 @@ def main():
     ap.add_argument("project", type=Path)
     ap.add_argument("--out", type=Path, help="write the Markdown report here instead of stdout")
     ap.add_argument("--json", action="store_true", help="print findings as JSON")
+    ap.add_argument("--no-values", action="store_true", help="do not show any data values in the report")
     args = ap.parse_args()
     project = args.project.resolve()
     if not project.is_dir():
@@ -361,6 +378,7 @@ def main():
     root = project / ARCHIVE_DIR if (project / ARCHIVE_DIR).is_dir() else project
 
     audit = Audit(root)
+    audit.no_values = args.no_values
     files = [p for p in walk(root) if p.is_file()]
     file_set = {p.resolve() for p in files}
 
@@ -398,11 +416,16 @@ def main():
             check_excel(audit, f, csv_stems)
             if " " in f.name:
                 audit.add("DATA-2", "REQ", "File name contains spaces; use a short name without spaces.", audit.rel(f))
+        elif ext in GUI_EXT:
+            audit.add("GUI-1", "REQ", "Project file from point-and-click software; every reported result needs a scripted version.", audit.rel(f))
         elif ext in OTHER_DATA_EXT and f != readme and not f.name.lower().startswith(("license", "licence", "requirements")):
             audit.inventory["other_data"].append(audit.rel(f))
         if readme_text and (ext in CODE_EXT | TABLE_EXT | EXCEL_EXT) and f.name not in readme_text:
             audit.add("DOC-2", "REQ", "File not listed in README.", audit.rel(f))
 
+    for f in audit.slim_unseeded:
+        if not audit.slim_seeded_by_driver:
+            audit.add("CODE-13", "REC", "SLiM model sets no seed (`setSeed()`) and no script runs `slim -s`; record a seed for every run.", audit.rel(f))
     if not audit.inventory["code"]:
         audit.add("CODE-1", "REQ", "No analysis code found; the journal requires code for all reported results.")
     if not audit.inventory["data_tables"]:
@@ -423,7 +446,7 @@ def main():
 
 
 def render(audit, readme):
-    order = {"DOC": 0, "CODE": 1, "DATA": 2, "ARCH": 3}
+    order = {"DOC": 0, "CODE": 1, "DATA": 2, "ARCH": 3, "PRIV": 4, "SENS": 5, "FIG": 6, "GUI": 7}
     def key(f):
         prefix, num = f["item"].split("-")
         return (f["level"] != "REQ", order[prefix], int(num))
