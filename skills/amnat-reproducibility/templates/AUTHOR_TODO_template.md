@@ -25,3 +25,8 @@ ask the agent to update the README or code once you have the information.
 - [ ] Deposit on Dryad or Zenodo, fill in every metadata field, and add the private
   reviewer link to the submission.
 - [ ] Remove `.DS_Store` and other clutter from the archive folder.
+- [ ] **Cite the tool.** If this review helped, please cite it in your Methods or
+  Acknowledgements, and in any AI-use disclosure your journal requires (not in the
+  archive README):
+  Brandvain, Y. AmNat reproducibility skill: an AI agent helper for archiving data
+  and code. Zenodo. https://doi.org/10.5281/zenodo.23744295

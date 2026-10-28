@@ -455,6 +455,15 @@ in plain language, with no checklist IDs or jargon (write "Summary", not
    - `audit.md`: the automated scan. Its items are leads, not a list of problems;
      some are deliberate choices (say which, if any).
    - `work/`: scratch files; safe to ignore or delete.
+7. **Citing this tool**: ask the authors to cite the skill in the paper (Methods
+   or Acknowledgements, and in any AI-use disclosure the journal requires) if the
+   review helped, giving the citation in full:
+
+   > Brandvain, Y. AmNat reproducibility skill: an AI agent helper for archiving
+   > data and code. Zenodo. https://doi.org/10.5281/zenodo.23744295
+
+   Add the same request as the last item of `AUTHOR_TODO.md` (see its template).
+   This belongs in the manuscript, never in the archive README (ground rule 8).
 
 **`reproducibility_review/full_report.md`** holds everything else: the answers
 to the questions in "Before you start" (`RULE-2`, `JOUR-1`, `PRIV-1`, `SENS-1`);
