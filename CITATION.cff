@@ -9,6 +9,7 @@ authors:
     given-names: Yaniv
     affiliation: University of Minnesota
 license: MIT
+doi: 10.5281/zenodo.23744295
 repository-code: "https://github.com/yanivjb/data_editor"
 abstract: >-
   An agent skill for Claude Code and Codex that helps authors prepare data, code,

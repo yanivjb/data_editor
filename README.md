@@ -1,5 +1,7 @@
 # AmNat reproducibility skill
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23744295.svg)](https://doi.org/10.5281/zenodo.23744295)
+
 > **Beta.** This skill is new and still being tested. Comments, problems, and
 > suggestions are very welcome: [open an issue](https://github.com/yanivjb/data_editor/issues/new)
 > or email Yaniv Brandvain (ybrandva AT umn dot edu).
@@ -154,9 +156,15 @@ you the commands to run yourself.
 
 ## How to cite
 
-If you use this skill, please cite it. GitHub's "Cite this repository" button
-(right-hand side of the repository page) gives the citation in APA and BibTeX,
-from [`CITATION.cff`](CITATION.cff).
+If you use this skill, please cite it:
+
+> Brandvain, Y. AmNat reproducibility skill: an AI agent helper for archiving data
+> and code. Zenodo. https://doi.org/10.5281/zenodo.23744295
+
+This DOI always points to the latest version; each release also has its own DOI,
+listed on the [Zenodo record](https://doi.org/10.5281/zenodo.23744295). GitHub's
+"Cite this repository" button (right-hand side of the repository page) gives the
+citation in APA and BibTeX, from [`CITATION.cff`](CITATION.cff).
 
 ## License
 
