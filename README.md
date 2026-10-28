@@ -152,6 +152,16 @@ you the commands to run yourself.
   prompts to paste, setup details, privacy, and troubleshooting.
 - [Contributing](CONTRIBUTING.md): repository layout and tests.
 
+## How to cite
+
+If you use this skill, please cite it. GitHub's "Cite this repository" button
+(right-hand side of the repository page) gives the citation in APA and BibTeX,
+from [`CITATION.cff`](CITATION.cff).
+
+## License
+
+[MIT](LICENSE).
+
 ## Source and caveats
 
 The checklist is from Bolnick, Schürch, Vedder, Reuter, Perez & Montgomerie

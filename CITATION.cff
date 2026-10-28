@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "AmNat reproducibility skill: an AI agent helper for archiving data and code"
+version: 0.9.0-beta
+date-released: 2026-10-28
+authors:
+  - family-names: Brandvain
+    given-names: Yaniv
+    affiliation: University of Minnesota
+license: MIT
+repository-code: "https://github.com/yanivjb/data_editor"
+abstract: >-
+  An agent skill for Claude Code and Codex that helps authors prepare data, code,
+  and README files for submission. It checks a project against The American
+  Naturalist's checklist for archiving data and code and reproducibility best
+  practice, reruns the code in a fresh session, checks that every figure, table,
+  and number in the manuscript is reproduced, and helps fix what the author
+  chooses.
+keywords:
+  - reproducibility
+  - data archiving
+  - open science
+  - ecology
+  - evolution
+  - AI agents
+references:
+  - type: article
+    title: "A checklist for reproducible archiving data and code in ecology, evolution, and behavior"
+    authors:
+      - family-names: Bolnick
+        given-names: Daniel I.
+      - family-names: Schürch
+        given-names: Roger
+      - family-names: Vedder
+        given-names: Daniel
+      - family-names: Reuter
+        given-names: Max
+      - family-names: Perez
+        given-names: Luis
+      - family-names: Montgomerie
+        given-names: Robert
+    year: 2021
+    journal: "From the Editor's Desk of The American Naturalist"
+    url: "http://comments.amnat.org/2021/12/guidelines-for-archiving-code-with-data.html"
