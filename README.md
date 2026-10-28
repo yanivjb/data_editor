@@ -1,5 +1,17 @@
 # AmNat reproducibility skill
 
+> **Beta.** This skill is new and still being tested. Comments, problems, and
+> suggestions are very welcome: [open an issue](https://github.com/yanivjb/data_editor/issues/new)
+> or email Yaniv Brandvain (ybrandva AT umn dot edu).
+
+> **Before you use it, check your institution's and your journal's rules.** A
+> coding agent sends what it reads to its model provider (Anthropic or OpenAI).
+> Make sure that using an AI agent on your project is allowed by your
+> institution (research data policies, ethics or IRB approvals, data-use
+> agreements, permits) and by the journal you are submitting to (its policy on
+> AI assistance, and any disclosure it requires). The agent will ask you to
+> confirm this before it reads anything.
+
 An optional helper for authors that works with Claude Code or Codex. Before you
 submit to *The American Naturalist*, it checks your data, code, and README against
 the journal's
@@ -10,6 +22,14 @@ result in your manuscript, and helps you fix what you choose.
 It is a pre-submission aid, not part of the journal's review: the journal's data
 editors still decide what is acceptable. Use it early, while the analysis is still
 being written, when fixes are cheap.
+
+**Other journals.** The skill is built around *The American Naturalist*'s
+checklist. Its practices are good ones and will likely serve you well at any
+journal. If you are submitting elsewhere, tell the agent which journal and give it
+that journal's data and code policy (a link, the text, or a PDF). It will check
+your project against both, note where the journal's rules differ, and follow the
+journal's sharing expectations, for example if human-subject data may only be
+shared as summaries or through controlled access.
 
 ## Quick start
 
@@ -47,8 +67,9 @@ can paste at each step, plus troubleshooting and other reference.
    hand instead: `git clone https://github.com/yanivjb/data_editor`, then
    `data_editor/install.sh /path/to/selfing_speciation`.)
 4. Ask: "Check this project against the AmNat data and code checklist."
-5. Answer its questions about what it may read and whether any data are
-   sensitive. Read the one-page `REPRODUCIBILITY_REPORT.md` and work through
+5. Answer its questions: whether your institution's and journal's rules allow
+   using an AI agent, which journal you are submitting to, what it may read, and
+   whether any data are sensitive. Read the one-page `REPRODUCIBILITY_REPORT.md` and work through
    `AUTHOR_TODO.md`; details are in `reproducibility_review/`.
 6. Carry on with the [user guide](docs/user-guide.md) for what to do next and
    suggested prompts.

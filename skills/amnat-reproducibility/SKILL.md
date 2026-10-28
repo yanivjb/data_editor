@@ -21,10 +21,16 @@ fix. The author decides what to change; the journal decides what is acceptable.
 The checklist is in [references/amnat-checklist.md](references/amnat-checklist.md).
 Read it before auditing and cite item IDs (e.g. `CODE-2`, `DATA-8`) in everything
 you report. Also read
-[references/data-editor-guidance.md](references/data-editor-guidance.md) (privacy,
-sensitive data, figures not made by code, point-and-click analyses; IDs `PRIV`,
-`SENS`, `FIG`, `GUI`) and, for slow analyses (MCMC, simulations including SLiM,
+[references/data-editor-guidance.md](references/data-editor-guidance.md)
+(institutional and journal rules, other journals, privacy, sensitive data, figures
+not made by code, point-and-click analyses; IDs `RULE`, `JOUR`, `PRIV`, `SENS`,
+`FIG`, `GUI`) and, for slow analyses (MCMC, simulations including SLiM,
 bioinformatics pipelines), [references/long-computations.md](references/long-computations.md).
+
+**Which journal.** The checklist is The American Naturalist's. Its practices are
+sound for most journals, so use it as the baseline for any paper. If the author is
+submitting elsewhere, also check that journal's own data and code policy and note
+where it differs (`JOUR-1` to `JOUR-4`).
 
 ## Choosing how deep to go
 
@@ -34,9 +40,10 @@ Unless the author has already said, ask which they want:
 2. **Full review**: steps 1–6 below, ending in a written report. No files changed.
 3. **Guided fixes**: full review, then fix the items the author picks (step 7).
 
-In every mode, ask the privacy and sensitive-data questions in "Before you start"
-first, before the audit script or anything else reads the author's files. Respect
-the choice of mode. Do not start editing during a scan or review.
+In every mode, ask the questions in "Before you start" (institutional and journal
+rules, target journal, privacy, sensitive data) first, before the audit script or
+anything else reads the author's files. Respect the choice of mode. Do not start
+editing during a scan or review.
 
 **Write the author-facing files to stand alone.** The author runs the review, but
 `REPRODUCIBILITY_REPORT.md`, `AUTHOR_TODO.md`, and `WHAT_CHANGED.md` are often
@@ -118,16 +125,27 @@ These protect the scientific record. Do not break them, even when asked casually
 
 ## Workflow
 
-### Before you start: privacy and sensitive data
+### Before you start: rules, journal, privacy, and sensitive data
 
-Before opening any data file, manuscript, or output, ask the author two questions
+Before opening any data file, manuscript, or output, ask the author these questions
 and record the answers at the top of the report:
 
-1. **What may leave this computer?** Explain that what you read is sent to the model
+1. **Do your institution's and your journal's rules allow this?** Before anything
+   else, ask the author to confirm that using an AI agent on this project is
+   permitted by their institution (e.g. research data policies, ethics or IRB
+   approvals, data-use agreements, permits) and by their target journal (e.g. its
+   policy on AI assistance, and any disclosure it requires) (`RULE-1`). If they are
+   unsure, suggest they check before going on, and offer to stop here; if they go
+   ahead, record that they chose to (`RULE-2`).
+2. **Which journal are you submitting to?** If it is not The American Naturalist,
+   follow `JOUR-1` to `JOUR-4`: ask for the journal's data and code policy (a link,
+   the text, or a PDF), compare it with the AmNat checklist, and adapt the review
+   to the journal's sharing expectations.
+3. **What may leave this computer?** Explain that what you read is sent to the model
    provider, then offer: (a) everything; (b) code, README, and manuscript, but not
    data contents; (c) only what the author pastes in (`PRIV-1`). Under (b), run the
    audit script with `--no-values` and do not print data rows (`PRIV-2`).
-2. **Are any data sensitive or restricted?** For example threatened-species
+4. **Are any data sensitive or restricted?** For example threatened-species
    locations, human-subject or personal data, Indigenous data, or data under permit
    or license limits (`SENS-1`). If yes, do not read those files' contents, and
    guide the author through the options in
@@ -423,7 +441,9 @@ in plain language, with no checklist IDs or jargon (write "Summary", not
    before recommended. Group similar findings ("12 column names contain spaces").
 4. **What we need from you**: "See `AUTHOR_TODO.md` (5 items)."
 5. One line on what was and was not checked (what you were allowed to read, which
-   steps were not rerun and why).
+   steps were not rerun and why). If the target journal is not The American
+   Naturalist, add one line naming it and pointing to where its policy differs
+   (`JOUR-3`).
 6. **Inside `reproducibility_review/`**, a few short lines saying what each file
    is and when to open it:
    - `full_report.md`: every finding with its evidence, every change made and
@@ -436,11 +456,13 @@ in plain language, with no checklist IDs or jargon (write "Summary", not
      some are deliberate choices (say which, if any).
    - `work/`: scratch files; safe to ignore or delete.
 
-**`reproducibility_review/full_report.md`** holds everything else: the privacy and
-sensitive-data answers (`PRIV-1`, `SENS-1`); every finding with its checklist ID,
-evidence (`path:line`), and the change needed; recommended improvements; the
-clean-run results, pointing to `runlog.md`; the full manuscript traceability table
-with its coverage summary; and a table of all checklist IDs with status.
+**`reproducibility_review/full_report.md`** holds everything else: the answers
+to the questions in "Before you start" (`RULE-2`, `JOUR-1`, `PRIV-1`, `SENS-1`);
+for another journal, the comparison of its policy with the checklist (`JOUR-3`);
+every finding with its checklist ID, evidence (`path:line`), and the change
+needed; recommended improvements; the clean-run results, pointing to `runlog.md`;
+the full manuscript traceability table with its coverage summary; and a table of
+all checklist IDs with status.
 
 Show the author the short report, in chat or by opening the file. Do not paste the
 full report into the chat.

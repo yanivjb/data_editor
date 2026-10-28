@@ -486,7 +486,7 @@ def check_readme(audit, files):
 
 
 PLACEHOLDER = re.compile(r"\bTODO\b|\bTBD\b|\bFIXME\b|\?\?\?|<!--|<(?!https?:)[A-Za-z][^<>\n]*\s[^<>\n]*>")
-CHECKLIST_ID = re.compile(r"\b(DOC|CODE|DATA|ARCH|PRIV|SENS|FIG|GUI)-\d+\b")
+CHECKLIST_ID = re.compile(r"\b(DOC|CODE|DATA|ARCH|RULE|JOUR|PRIV|SENS|FIG|GUI)-\d+\b")
 REVIEW_NOTE = re.compile(
     r"author[- ]confirm|confirmed by the author|the authors? confirms?|verified rerun|"
     r"data editor|reproducibility (review|check|audit)|REPRODUCIBILITY_|reproducibility_review|AUTHOR_TODO|"
@@ -591,7 +591,7 @@ def main():
 
 
 def render(audit, readme):
-    order = {"DOC": 0, "CODE": 1, "DATA": 2, "ARCH": 3, "PRIV": 4, "SENS": 5, "FIG": 6, "GUI": 7}
+    order = {"DOC": 0, "CODE": 1, "DATA": 2, "ARCH": 3, "RULE": 4, "JOUR": 5, "PRIV": 6, "SENS": 7, "FIG": 8, "GUI": 9}
     def key(f):
         prefix, num = f["item"].split("-")
         return (f["level"] != "REQ", order[prefix], int(num))

@@ -43,14 +43,25 @@ In your project folder, start `claude` or `codex` and ask:
 
 Before it reads anything, the agent asks:
 
-1. **What may it read?** Everything; code, README, and manuscript but not data
+1. **Do your institution's and journal's rules allow this?** Check that using an
+   AI agent on your project is permitted by your institution (research data
+   policies, ethics or IRB approvals, data-use agreements, permits) and by your
+   target journal (its AI policy, and any disclosure it requires). If you are
+   unsure, check before going on.
+2. **Which journal are you submitting to?** The skill is built on *The American
+   Naturalist*'s checklist, whose practices suit most journals. For another
+   journal, give it the journal's data and code policy (a link, the text, or a
+   PDF); it checks your project against both, notes the differences, and follows
+   that journal's sharing expectations (for example, summaries only for
+   human-subject data).
+3. **What may it read?** Everything; code, README, and manuscript but not data
    contents; or only what you paste in. What it reads is sent to Anthropic or
    OpenAI: see [Privacy](#privacy).
-2. **Are any data sensitive or restricted?** For example threatened-species
+4. **Are any data sensitive or restricted?** For example threatened-species
    locations, personal data, Indigenous data, or data under a permit or license.
    If so, it will not read those files and will go through sharing options with
    you.
-3. **How deep should it go?** A quick scan (minutes), a full review (no files
+5. **How deep should it go?** A quick scan (minutes), a full review (no files
    changed), or a review followed by fixes you choose.
 
 In a full review it scans the archive for common problems, checks every item of
@@ -344,8 +355,9 @@ are in
 - Your code runs on your computer. What leaves it is what the agent reads: file
   contents, command output, and the helper scripts' reports, sent to Anthropic
   (Claude Code) or OpenAI (Codex) under your account's terms.
-- Before letting it read everything, check your institution's rules, any data-use
-  agreement, and your agent account's data settings.
+- Before using it at all, check that your institution's and your journal's rules
+  allow AI assistance on this project. Before letting it read everything, also
+  check any data-use agreement and your agent account's data settings.
 - With "not data contents", the scan reports only column names, counts, and types.
 - The agent never uploads, pushes, posts, or deposits anything.
 

@@ -1,10 +1,35 @@
 # Data editor guidance beyond the published checklist
 
 The published checklist ([amnat-checklist.md](amnat-checklist.md)) does not cover
-everything a data editor runs into. This file adds guidance for four situations.
-Item IDs (`PRIV-1`, `SENS-1`, ...) can be cited in reports like checklist IDs.
+everything a data editor runs into. This file adds guidance for six situations.
+Item IDs (`RULE-1`, `PRIV-1`, ...) can be cited in reports like checklist IDs.
 Where a point is a decision for the journal (e.g. an exception to data sharing),
 say so and send the author to the editor; do not promise an outcome.
+
+## Institutional and journal rules (RULE)
+
+Using an AI agent on unpublished research may be limited by the author's
+institution or by the journal, independently of what the data are. The author is
+responsible for knowing these rules; the agent's job is to make sure they have
+thought about them before anything is read.
+
+| ID | Item |
+|----|------|
+| RULE-1 | Before reading anything, ask the author to confirm that using an AI agent on this project is allowed by (a) their institution, e.g. research data or IT policies, ethics or IRB approvals, data-use agreements, collection permits, or funder terms; and (b) their target journal, e.g. its policy on AI assistance in preparing manuscripts, data, or code, and any disclosure it requires. |
+| RULE-2 | If the author is unsure, suggest they check first and offer to stop. If they choose to go ahead, do so (ground rule 9) and record their answer at the top of the full report. If the journal requires disclosure of AI assistance, add an `AUTHOR_TODO.md` item to include it in the submission. |
+
+## Other journals (JOUR)
+
+The AmNat checklist is a sound baseline for any journal, but journals differ in
+what they require and in what they allow to be shared. When the author is
+submitting elsewhere, check against both.
+
+| ID | Item |
+|----|------|
+| JOUR-1 | Ask which journal the author is submitting to, and record it. If it is not The American Naturalist, ask for its data and code policy: a link, pasted text, or a PDF. If web access is available and the author agrees, look it up, and tell the author which page you used. If no policy can be found, say so and use the AmNat checklist alone. |
+| JOUR-2 | Compare the journal's policy with [amnat-checklist.md](amnat-checklist.md) item by item. Note requirements the journal adds (e.g. a named repository, a data availability statement in a set format, code licensing, a reproducibility review of its own), and AmNat requirements the journal does not have; report the latter as recommendations (REC), not requirements. |
+| JOUR-3 | Follow the journal's sharing expectations where they differ. For example, a journal may expect human-subject data to be shared only as summaries or through controlled access, or may require raw sequence data in a specific database. Adapt the relevant checks (`DATA-1`, `DATA-7`, `SENS-2` to `SENS-4`) and say in the report what was adapted and why. Record the comparison in the full report, and give a one-line summary in the short report. |
+| JOUR-4 | Quote or cite the policy text behind each difference. Policies change: remind the author to confirm against the journal's current instructions before submitting. Whether an archive is acceptable is the journal's decision. |
 
 ## Privacy: what may leave the author's computer (PRIV)
 

@@ -2,6 +2,7 @@
 
 Run from the repository root:  python3 tests/test_audit.py
 """
+import importlib.util
 import json
 import subprocess
 import sys
@@ -64,6 +65,13 @@ def main():
         # The audit report must never include the manuscript folder.
         if any((f["where"] or "").startswith("ms_files") for f in findings):
             failures.append(f"{example}: scanned ms_files/")
+    # Every item-ID prefix in the references must be caught if it leaks into a README.
+    spec = importlib.util.spec_from_file_location("audit_archive", AUDIT)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    for item in ("DOC-2", "CODE-6", "DATA-8", "ARCH-1", "RULE-1", "JOUR-3", "PRIV-2", "SENS-4", "FIG-3", "GUI-1"):
+        if not module.CHECKLIST_ID.search(f"See {item}."):
+            failures.append(f"checklist ID {item} not recognised in README text")
     for f in failures:
         print("FAIL", f)
     print(f"{len(failures)} failure(s)")
