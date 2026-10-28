@@ -11,8 +11,7 @@
 > Make sure that using an AI agent on your project is allowed by your
 > institution (research data policies, ethics or IRB approvals, data-use
 > agreements, permits) and by the journal you are submitting to (its policy on
-> AI assistance, and any disclosure it requires). The agent will ask you to
-> confirm this before it reads anything.
+> AI assistance, and any disclosure it requires). 
 
 An optional helper for authors that works with Claude Code or Codex. Before you
 submit to *The American Naturalist*, it checks your data, code, and README against
@@ -24,6 +23,8 @@ result in your manuscript, and helps you fix what you choose.
 It is a pre-submission aid, not part of the journal's review: the journal's data
 editors still decide what is acceptable. Use it early, while the analysis is still
 being written, when fixes are cheap.
+
+**AI Statement.** This product was developed with and written by claude code.
 
 **Other journals.** The skill is built around *The American Naturalist*'s
 checklist. Its practices are good ones and will likely serve you well at any
